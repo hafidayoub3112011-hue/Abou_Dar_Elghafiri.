@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الثانوية الإعدادية أبو ذر الغفاري - منظومة التدبير التربوي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Cairo', sans-serif; background-color: #ffffff; color: #0f172a; }
+        .glass-card { background: #f8fafc; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        @media print {
+            header, footer, .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; color: black !important; }
+            .glass-card { border: none !important; box-shadow: none !important; background: transparent !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-white text-slate-900 antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- تثبيت الشريط العلوي -->
+    <header class="sticky top-0 z-40 bg-slate-100 border-b border-slate-300 p-2 sm:p-4 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center justify-between w-full py-2 px-3 bg-emerald-800 text-white rounded-lg shadow gap-2">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <img src="logocollege.jpg" alt="شعار المؤسسة" class="h-12 w-12 sm:h-16 sm:w-16 rounded-full border-2 border-amber-400 object-cover bg-white shadow-sm">
+                    <div>
+                        <h1 class="text-xs sm:text-sm font-black text-amber-300">الثانوية الإعدادية</h1>
+                        <h2 class="text-sm sm:text-base font-black text-white">أبو ذر الغفاري</h2>
+                    </div>
+                </div>
+
+                <div class="hidden lg:flex items-center gap-6 text-xs text-slate-100 font-semibold">
+                    <div class="text-center">
+                        <span class="block font-bold text-amber-300">المملكة المغربية</span>
+                        <span class="text-[11px]">وزارة التربية الوطنية والتعليم الأولي والرياضة</span>
+                    </div>
+                    <div class="h-8 w-[1px] bg-emerald-600"></div>
+                    <div class="text-center">
+                        <span class="block font-bold text-amber-300">الأكاديمية الجهوية</span>
+                        <span class="text-[11px]">جهة الدار البيضاء - سطات</span>
+                    </div>
+                    <div class="h-8 w-[1px] bg-emerald-600"></div>
+                    <div class="text-center">
+                        <span class="block font-bold text-amber-300">المديرية الإقليمية</span>
+                        <span class="text-[11px]">عمالة مقاطعة الحي الحسني</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                    <button onclick="navGoHome()" title="الصفحة الرئيسية" class="flex items-center gap-1 bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition border border-emerald-500 shadow-sm">
+                        <i class="fa-solid fa-house"></i>
+                        <span class="hidden sm:inline">الرئيسية</span>
+                    </button>
+                    <button onclick="navGoBack()" title="الرجوع" class="flex items-center gap-1 bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition border border-emerald-500 shadow-sm">
+                        <i class="fa-solid fa-arrow-right"></i>
+                        <span class="hidden sm:inline">الرجوع</span>
+                    </button>
+                    <button onclick="navLogout()" title="تسجيل الخروج" class="flex items-center gap-1 bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition border border-rose-500 shadow-sm">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span class="hidden sm:inline">خروج</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 border-2 border-slate-900 text-amber-300 mt-2 sm:mt-3 py-2 px-3 sm:px-4 rounded-lg max-w-7xl mx-auto text-center text-xs sm:text-sm md:text-base font-black shadow leading-relaxed">
+            مرحبا بكم في البوابة الرقمية للثانوية الإعدادية أبو ذر الغفاري | رمز المؤسسة: 75115 S 77 | مدير المؤسسة: مصطفى الصابري | الهاتف: 0608899562
+        </div>
+    </header>
+
+    <main id="app-container" class="max-w-7xl mx-auto p-2 sm:p-4 md:p-6 w-full flex-grow">
+    </main>
+
+    <footer class="bg-slate-100 border-t border-slate-300 py-3 px-4 sm:px-6 text-center text-xs text-slate-700 font-bold flex items-center justify-center max-w-7xl mx-auto w-full">
+        <span>جميع الحقوق محفوظة © الثانوية الإعدادية أبو ذر الغفاري</span>
+    </footer>
+
+    <!-- إخفاء حقول رفع ملفات الإكسيل للأساتذة والتلاميذ -->
+    <input type="file" id="global-excel-students-input" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelStudentsUpload(event)">
+    <input type="file" id="global-excel-teachers-input" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelTeachersUpload(event)">
+
+    <script>
+        // إعدادات اتصال منصة Firebase (Real-time Database)
+        const firebaseConfig = {
+            apiKey: "YOUR_FIREBASE_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+
+        let db = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+        } catch (e) {
+            console.warn("Firebase initialization warning (using local storage fallback):", e);
+        }
+
+        const OFFICIAL_CLASSES = [
+            "1APIC-1", "1APIC-2", "1APIC-3", "1APIC-4", "1APIC-5", "1APIC-6",
+            "2APIC-1", "2APIC-2", "2APIC-3", "2APIC-4", "2APIC-5", "2APIC-6",
+            "3APIC-1", "3APIC-2", "3APIC-3", "3APIC-4", "3APIC-5", "3APIC-6", "3APIC-7"
+        ];
+
+        const ALLOWED_ADMINS = [
+            { name: "مصطفى الصابري", role: "المدير", ppr: "ABOUDAR01", code: "ABOUDAR01", phone: "0608899562" },
+            { name: "فلان الفلاني", role: "حارس عام", ppr: "ABOUDAR02", code: "ABOUDAR02", phone: "0600000000" }
+        ];
+
+        let appData = {
+            students: [],
+            teachers: [],
+            adminStaff: ALLOWED_ADMINS,
+            announcements: [],
+            attendance: [],
+            behavior: [],
+            homework: [],
+            notes: [],
+            failureRisk: [],
+            adminActions: []
+        };
+
+        let currentSession = null;
+        let navHistory = [];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStorageData();
+            setupFirebaseRealtimeSync();
+            renderHomePage();
+        });
+
+        function setupFirebaseRealtimeSync() {
+            if (!db) return;
+            const ref = db.ref('school_app_data');
+            ref.on('value', (snapshot) => {
+                const serverData = snapshot.val();
+                if (serverData) {
+                    appData = serverData;
+                    if (!appData.adminStaff || appData.adminStaff.length === 0) appData.adminStaff = ALLOWED_ADMINS;
+                    saveLocalStorage();
+                }
+            });
+        }
+
+        function loadStorageData() {
+            const saved = localStorage.getItem('school_app_data');
+            if (saved) {
+                try { 
+                    appData = JSON.parse(saved); 
+                    if (!appData.adminStaff || appData.adminStaff.length === 0) appData.adminStaff = ALLOWED_ADMINS;
+                    if (!appData.students) appData.students = [];
+                    if (!appData.teachers) appData.teachers = [];
+                    if (!appData.attendance) appData.attendance = [];
+                    if (!appData.behavior) appData.behavior = [];
+                    if (!appData.homework) appData.homework = [];
+                    if (!appData.notes) appData.notes = [];
+                    if (!appData.failureRisk) appData.failureRisk = [];
+                    if (!appData.adminActions) appData.adminActions = [];
+                } catch(e) { console.error(e); }
+            }
+        }
+
+        function saveLocalStorage() {
+            localStorage.setItem('school_app_data', JSON.stringify(appData));
+        }
+
+        function saveData() {
+            saveLocalStorage();
+            if (db) {
+                db.ref('school_app_data').set(appData).catch(err => console.error("Firebase sync error:", err));
+            }
+        }
+
+        function removeDuplicateStudents() {
+            if (appData.students && appData.students.length > 0) {
+                const uniqueMap = new Map();
+                appData.students.forEach(s => {
+                    const key = s.massarId ? String(s.massarId).trim().toUpperCase() : `${s.lastName}_${s.firstName}_${s.className}`;
+                    if (!uniqueMap.has(key)) {
+                        uniqueMap.set(key, s);
+                    }
+                });
+                appData.students = Array.from(uniqueMap.values());
+            }
+        }
+
+        function removeDuplicateTeachers() {
+            if (appData.teachers && appData.teachers.length > 0) {
+                const uniqueMap = new Map();
+                appData.teachers.forEach(t => {
+                    const key = t.ppr ? String(t.ppr).trim().toUpperCase() : `${t.name}_${t.subject}`;
+                    if (!uniqueMap.has(key)) {
+                        uniqueMap.set(key, t);
+                    }
+                });
+                appData.teachers = Array.from(uniqueMap.values());
+            }
+        }
+
+        function navigateTo(viewFn, params = null) {
+            navHistory.push({ viewFn, params });
+            viewFn(params);
+        }
+
+        function navGoHome() {
+            navHistory = [{ viewFn: renderHomePage, params: null }];
+            currentSession = null;
+            renderHomePage();
+        }
+
+        function navGoBack() {
+            if (navHistory.length > 1) {
+                navHistory.pop();
+                const previous = navHistory[navHistory.length - 1];
+                previous.viewFn(previous.params);
+            } else {
+                renderHomePage();
+            }
+        }
+
+        function navLogout() {
+            currentSession = null;
+            navHistory = [];
+            renderHomePage();
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        function renderChangePasswordModal() {
+            const modal = document.createElement('div');
+            modal.id = 'change-pass-modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-4 sm:p-6 max-w-md w-full shadow-2xl border border-slate-300">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-key ml-2 text-amber-600"></i>تغيير رمز الدخول</h3>
+                    <div class="space-y-3 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">رمز الدخول الحالي:</label>
+                            <input type="password" id="old-pass-input" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">رمز الدخول الجديد:</label>
+                            <input type="password" id="new-pass-input" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">تأكيد رمز الدخول الجديد:</label>
+                            <input type="password" id="confirm-pass-input" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-bold">
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="submitChangePassword()" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-lg">حفظ التغيير</button>
+                        <button onclick="document.getElementById('change-pass-modal').remove()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-sm rounded-lg">إلغاء</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function submitChangePassword() {
+            const oldPass = document.getElementById('old-pass-input').value.trim();
+            const newPass = document.getElementById('new-pass-input').value.trim();
+            const confirmPass = document.getElementById('confirm-pass-input').value.trim();
+
+            if (!oldPass || !newPass || !confirmPass) return alert('يرجى ملء جميع الحقول.');
+            if (newPass !== confirmPass) return alert('رمز الدخول الجديد وتأكيده غير متطابقين.');
+
+            if (currentSession.role === 'TEACHER') {
+                const teacher = currentSession.user;
+                if ((teacher.code || teacher.ppr) !== oldPass) return alert('رمز الدخول الحالي غير صحيح.');
+                teacher.code = newPass;
+                const idx = appData.teachers.findIndex(t => t.ppr === teacher.ppr);
+                if (idx !== -1) appData.teachers[idx].code = newPass;
+            } else if (currentSession.role === 'ADMIN') {
+                const admin = currentSession.user;
+                if ((admin.code || admin.ppr) !== oldPass) return alert('رمز الدخول الحالي غير صحيح.');
+                admin.code = newPass;
+                const idx = appData.adminStaff.findIndex(a => a.ppr === admin.ppr);
+                if (idx !== -1) appData.adminStaff[idx].code = newPass;
+            }
+            saveData();
+            alert('تم تغيير رمز الدخول بنجاح.');
+            document.getElementById('change-pass-modal').remove();
+        }
+
+        function renderHomePage() {
+            const container = document.getElementById('app-container');
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 my-6 sm:my-10 max-w-4xl mx-auto">
+                    <div class="glass-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-emerald-500 transition border-2 border-slate-200 shadow-sm">
+                        <div>
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-emerald-100 border border-emerald-400 flex items-center justify-center mb-4 mx-auto text-emerald-600 text-2xl">
+                                <i class="fa-solid fa-chalkboard-user"></i>
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-black text-center text-slate-800 mb-4 sm:mb-6">فضاء الأساتذة</h3>
+                        </div>
+                        <button onclick="navigateTo(renderTeacherLogin)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm sm:text-base transition">
+                            <i class="fa-solid fa-right-to-bracket"></i> الدخول للفضاء
+                        </button>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-blue-500 transition border-2 border-slate-200 shadow-sm">
+                        <div>
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-blue-100 border border-blue-400 flex items-center justify-center mb-4 mx-auto text-blue-600 text-2xl">
+                                <i class="fa-solid fa-school"></i>
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-black text-center text-slate-800 mb-4 sm:mb-6">فضاء الإدارة</h3>
+                        </div>
+                        <button onclick="navigateTo(renderAdminLogin)" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm sm:text-base transition">
+                            <i class="fa-solid fa-user-shield"></i> الدخول للفضاء
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTeacherLogin() {
+            const container = document.getElementById('app-container');
+            container.innerHTML = `
+                <div class="max-w-md mx-auto glass-card p-5 sm:p-8 rounded-2xl mt-4 sm:mt-10 border border-slate-300">
+                    <h2 class="text-lg sm:text-xl font-bold text-center mb-6 text-emerald-700"><i class="fa-solid fa-key ml-2"></i>تسجيل دخول الأستاذ (ة)</h2>
+                    <form onsubmit="handleTeacherLogin(event)">
+                        <label class="block text-xs sm:text-sm text-slate-700 font-bold mb-2">رقم التأجير / رمز الدخول:</label>
+                        <div class="relative mb-4">
+                            <input type="password" id="ppr-input" placeholder="أدخل رمز الدخول..." class="w-full p-3 bg-white border border-slate-400 rounded-xl text-slate-900 text-center font-mono font-bold pl-10 text-sm">
+                            <button type="button" onclick="togglePasswordVisibility('ppr-input', 'ppr-toggle-icon')" class="absolute left-3 top-3.5 text-slate-500 hover:text-slate-800">
+                                <i id="ppr-toggle-icon" class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 font-bold rounded-xl text-white mb-3 text-sm">دخول الفضاء</button>
+                    </form>
+                </div>
+            `;
+        }
+
+        function handleTeacherLogin(e) {
+            e.preventDefault();
+            const ppr = document.getElementById('ppr-input').value.trim();
+            const teacher = appData.teachers.find(t => String(t.ppr).trim() === ppr || (t.code && String(t.code).trim() === ppr));
+            if (teacher) {
+                currentSession = { role: 'TEACHER', user: teacher };
+                navHistory = [];
+                navigateTo(renderTeacherDashboard);
+            } else {
+                alert('رمز الدخول أو رقم التأجير غير موجود.');
+            }
+        }
+
+        function renderAdminLogin() {
+            const container = document.getElementById('app-container');
+            container.innerHTML = `
+                <div class="max-w-md mx-auto glass-card p-5 sm:p-8 rounded-2xl mt-4 sm:mt-10 border border-slate-300">
+                    <h2 class="text-lg sm:text-xl font-bold text-center mb-6 text-blue-700"><i class="fa-solid fa-user-shield ml-2"></i>تسجيل دخول الإدارة</h2>
+                    <form onsubmit="handleAdminLogin(event)">
+                        <label class="block text-xs sm:text-sm text-slate-700 font-bold mb-2">رمز الولوج / رقم التأجير للإداري:</label>
+                        <div class="relative mb-4">
+                            <input type="password" id="admin-code-input" placeholder="أدخل رمز الولوج الإداري..." class="w-full p-3 bg-white border border-slate-400 rounded-xl text-slate-900 text-center font-mono font-bold pl-10 text-sm">
+                            <button type="button" onclick="togglePasswordVisibility('admin-code-input', 'admin-toggle-icon')" class="absolute left-3 top-3.5 text-slate-500 hover:text-slate-800">
+                                <i id="admin-toggle-icon" class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 font-bold rounded-xl text-white mb-3 text-sm">دخول فضاء الإدارة</button>
+                    </form>
+                </div>
+            `;
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const code = document.getElementById('admin-code-input').value.trim();
+            const adminList = appData.adminStaff && appData.adminStaff.length > 0 ? appData.adminStaff : ALLOWED_ADMINS;
+            const admin = adminList.find(a => 
+                (a.code && String(a.code).trim() === code) || 
+                (a.ppr && String(a.ppr).trim() === code)
+            );
+
+            if (admin) {
+                currentSession = { role: 'ADMIN', user: admin };
+                navHistory = [];
+                navigateTo(renderAdminDashboard);
+            } else {
+                alert('عذراً، رمز الولوج غير موجود بجدول الأطر الإدارية المصرح لها.');
+            }
+        }
+
+        function requireAuth(role) {
+            if (!currentSession || currentSession.role !== role) {
+                if (role === 'ADMIN') {
+                    renderAdminLogin();
+                } else {
+                    renderTeacherLogin();
+                }
+                return false;
+            }
+            return true;
+        }
+
+        function getTeacherHeaderInfoHTML() {
+            if (!currentSession || currentSession.role !== 'TEACHER') return '';
+            const t = currentSession.user;
+            return `
+                <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-300 px-3 py-1.5 rounded-lg text-emerald-800 text-xs font-bold no-print">
+                    <i class="fa-solid fa-user-check text-emerald-600"></i>
+                    <span>${t.name || ''} - ${t.subject || t.role || ''}</span>
+                </div>
+            `;
+        }
+
+        function getAdminHeaderHTML(title, iconClass, colorClass = "text-slate-800") {
+            const adminInfo = (currentSession && currentSession.role === 'ADMIN' && currentSession.user) 
+                ? `<div class="flex items-center gap-2 bg-blue-50 border border-blue-300 px-3 py-1.5 rounded-lg text-blue-800 text-xs font-bold no-print ml-auto">
+                    <i class="fa-solid fa-user-shield text-blue-600"></i>
+                    <span>${currentSession.user.name || ''} - ${currentSession.user.role || ''}</span>
+                   </div>`
+                : '';
+
+            return `
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-4 bg-white/80 backdrop-blur p-2 rounded-xl sticky top-24 z-30 shadow-sm border border-slate-200">
+                    <h2 class="text-lg sm:text-xl font-bold ${colorClass}">
+                        <i class="${iconClass} ml-2"></i>${title}
+                    </h2>
+                    ${adminInfo}
+                    <button onclick="window.print()" class="no-print bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow flex items-center gap-1">
+                        <i class="fa-solid fa-print"></i> طباعة
+                    </button>
+                </div>
+            `;
+        }
+
+        function buildAdminClassStudentSelectorHTML(onClassChangeFnName, selectStudentFnName) {
+            let classOptions = OFFICIAL_CLASSES.map(c => `<option value="${c}">${c}</option>`).join('');
+            return `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6 glass-card p-3 sm:p-4 rounded-xl border border-slate-300">
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">اختيار القسم:</label>
+                        <select id="admin-class-select" onchange="${onClassChangeFnName}(this.value)" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-slate-900 font-bold text-xs sm:text-sm">
+                            <option value="">-- جميع الأقسام --</option>
+                            ${classOptions}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">اختيار التلميذ (ة):</label>
+                        <select id="admin-student-select" onchange="${selectStudentFnName ? selectStudentFnName+'(this.value)' : ''}" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-slate-900 font-bold text-xs sm:text-sm">
+                            <option value="">-- جميع التلاميذ --</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        }
+
+        function onAdminClassChange(className) {
+            const select = document.getElementById('admin-student-select');
+            if (!select) return;
+            select.innerHTML = '<option value="">-- جميع التلاميذ --</option>';
+            if (!className) return;
+            const students = appData.students.filter(s => s.className === className);
+            students.forEach(s => {
+                select.innerHTML += `<option value="${s.massarId}">${s.orderNum || ''} - ${s.lastName} ${s.firstName} (${s.massarId})</option>`;
+            });
+        }
+
+        // -------------------------------------------------------------
+        // TEACHER DASHBOARD
+        // -------------------------------------------------------------
+        function renderTeacherDashboard() {
+            if (!requireAuth('TEACHER')) return;
+            const teacher = currentSession.user;
+            document.getElementById('app-container').innerHTML = `
+                <div class="glass-card p-4 rounded-2xl mb-6 flex flex-wrap justify-between items-center gap-4 border-r-4 border-emerald-600">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-bold text-emerald-800">${teacher.name || 'الأستاذ (ة)'}</h2>
+                        <p class="text-xs sm:text-sm text-slate-600 font-semibold">المادة: <span class="text-slate-900 font-bold">${teacher.subject || 'غير محددة'}</span></p>
+                    </div>
+                    <button onclick="renderChangePasswordModal()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center gap-2">
+                        <i class="fa-solid fa-key"></i> تغيير رمز الدخول
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <button onclick="navigateTo(renderTeacherAnnouncements)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center flex flex-col items-center gap-2 border border-slate-300">
+                        <i class="fa-solid fa-bullhorn text-xl text-amber-600"></i>
+                        <span class="font-bold text-xs sm:text-sm">1. إخبار</span>
+                    </button>
+                    <button onclick="navigateTo(renderTeacherClasses)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center flex flex-col items-center gap-2 border border-slate-300">
+                        <i class="fa-solid fa-users-rectangle text-xl text-teal-600"></i>
+                        <span class="font-bold text-xs sm:text-sm">2. الأقسام</span>
+                    </button>
+                    <button onclick="navigateTo(renderTeacherAttendance)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center flex flex-col items-center gap-2 border border-slate-300">
+                        <i class="fa-solid fa-user-clock text-xl text-rose-600"></i>
+                        <span class="font-bold text-xs sm:text-sm">3. تتبع الغياب</span>
+                    </button>
+                    <button onclick="navigateTo(renderTeacherBehavior)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center flex flex-col items-center gap-2 border border-slate-300">
+                        <i class="fa-solid fa-shield-halved text-xl text-sky-600"></i>
+                        <span class="font-bold text-xs sm:text-sm">4. تتبع السلوك</span>
+                    </button>
+                    <button onclick="navigateTo(renderTeacherHomework)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center flex flex-col items-center gap-2 border border-slate-300">
+                        <i class="fa-solid fa-book-open text-xl text-purple-600"></i>
+                        <span class="font-bold text-xs sm:text-sm">5. تتبع الواجبات</span>
+                    </button>
+                    <button onclick="navigateTo(renderTeacherNotes)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center flex flex-col items-center gap-2 border border-slate-300">
+                        <i class="fa-solid fa-note-sticky text-xl text-emerald-600"></i>
+                        <span class="font-bold text-xs sm:text-sm">6. ملاحظات</span>
+                    </button>
+                    <button onclick="navigateTo(renderTeacherFailureRisk)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center flex flex-col items-center gap-2 border border-slate-300">
+                        <i class="fa-solid fa-triangle-exclamation text-xl text-orange-600"></i>
+                        <span class="font-bold text-xs sm:text-sm">7. المهددون بالفشل</span>
+                    </button>
+                </div>
+            `;
+        }
+
+        function buildClassStudentSelectorHTML() {
+            const classes = currentSession.user.assignedClasses || OFFICIAL_CLASSES;
+            let classOptions = classes.map(c => `<option value="${c}">${c}</option>`).join('');
+            return `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6 glass-card p-3 sm:p-4 rounded-xl border border-slate-300">
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">اختر القسم:</label>
+                        <select id="teacher-class-select" onchange="onTeacherClassChange(this.value)" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-slate-900 font-bold text-xs sm:text-sm">
+                            <option value="">-- اختر القسم --</option>
+                            ${classOptions}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">اختر التلميذ (ة):</label>
+                        <select id="teacher-student-select" onchange="onTeacherStudentChange(this.value)" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-slate-900 font-bold text-xs sm:text-sm">
+                            <option value="">-- اختر التلميذ (ة) بعد اختيار القسم --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">ملاحظة التلميذ (ة) (الحالة):</label>
+                        <input type="text" id="teacher-student-note" readonly placeholder="حالة التلميذ (ة)..." class="w-full p-2 bg-slate-100 border border-slate-300 rounded-lg text-slate-900 font-bold text-xs sm:text-sm text-center">
+                    </div>
+                </div>
+            `;
+        }
+
+        function onTeacherClassChange(className) {
+            const select = document.getElementById('teacher-student-select');
+            const noteInput = document.getElementById('teacher-student-note');
+            select.innerHTML = '<option value="">-- اختر التلميذ (ة) --</option>';
+            if (noteInput) noteInput.value = '';
+            if (!className) return;
+            const students = appData.students.filter(s => s.className === className);
+            students.forEach(s => {
+                select.innerHTML += `<option value="${s.massarId}">${s.orderNum || ''} - ${s.lastName} ${s.firstName} (${s.massarId})</option>`;
+            });
+        }
+
+        function onTeacherStudentChange(massarId) {
+            const noteInput = document.getElementById('teacher-student-note');
+            if (!noteInput) return;
+            if (!massarId) { noteInput.value = ''; return; }
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massarId).trim());
+            noteInput.value = student && student.note ? student.note : 'متمدرس';
+        }
+
+        function renderTeacherClasses() {
+            if (!requireAuth('TEACHER')) return;
+            const classes = currentSession.user.assignedClasses || OFFICIAL_CLASSES;
+            let grid = classes.map(c => {
+                const count = appData.students.filter(s => s.className === c).length;
+                return `
+                    <div class="glass-card p-4 rounded-xl border border-slate-300 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-slate-800">${c}</h4>
+                            <span class="text-xs font-bold text-slate-500">${count} تلميذ (ة)</span>
+                        </div>
+                        <button onclick="renderTeacherClassStudentsList('${c}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded shadow">عرض التلاميذ</button>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-teal-700"><i class="fa-solid fa-users-rectangle ml-2"></i>الأقسام المسندة</h2>
+                    ${getTeacherHeaderInfoHTML()}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">${grid}</div>
+            `;
+        }
+
+        function renderTeacherClassStudentsList(className) {
+            if (!requireAuth('TEACHER')) return;
+            const students = appData.students.filter(s => s.className === className);
+            let rows = students.map(s => `
+                <tr class="border-b border-slate-200 hover:bg-slate-100">
+                    <td class="p-2 font-mono text-xs">${s.orderNum || '-'}</td>
+                    <td class="p-2 font-mono text-xs text-amber-700 font-bold">${s.massarId}</td>
+                    <td class="p-2 font-bold text-xs">${s.lastName}</td>
+                    <td class="p-2 text-xs">${s.firstName}</td>
+                    <td class="p-2 text-xs">${s.gender || '-'}</td>
+                    <td class="p-2 font-mono text-xs">${s.birthDate || '-'}</td>
+                    <td class="p-2 text-xs">${s.birthPlace || '-'}</td>
+                    <td class="p-2 text-xs font-bold text-slate-600">${s.note || 'متمدرس'}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg sm:text-xl font-black text-emerald-800"><i class="fa-solid fa-users ml-2"></i>تلاميذ قسم: <span class="text-amber-600">${className}</span> (${students.length} تلميذ (ة))</h2>
+                    <div class="flex items-center gap-2">
+                        ${getTeacherHeaderInfoHTML()}
+                        <button onclick="navigateTo(renderTeacherClasses)" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs px-3 py-1.5 rounded border border-slate-400">الرجوع للأقسام</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto max-h-[65vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-2 whitespace-nowrap">الرقم الترتيبي</th>
+                                <th class="p-2 whitespace-nowrap">رمز مسار</th>
+                                <th class="p-2 whitespace-nowrap">النسب</th>
+                                <th class="p-2 whitespace-nowrap">الاسم</th>
+                                <th class="p-2 whitespace-nowrap">النوع</th>
+                                <th class="p-2 whitespace-nowrap">تاريخ الازدياد</th>
+                                <th class="p-2 whitespace-nowrap">مكان الازدياد</th>
+                                <th class="p-2 whitespace-nowrap">ملاحظة</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="8" class="text-center p-6 text-slate-500 font-bold">لا يوجد تلاميذ مسجلون في هذا القسم حالياً.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderTeacherAnnouncements() {
+            if (!requireAuth('TEACHER')) return;
+            const announcements = appData.announcements.filter(a => a.target === 'ALL' || a.target === 'TEACHERS');
+            let list = announcements.map(a => `
+                <div class="glass-card p-4 rounded-xl mb-3 border-r-4 border-amber-500">
+                    <div class="flex justify-between items-center text-xs text-slate-500 mb-1 font-bold">
+                        <span>${a.date}</span>
+                        <span>موجه إلى: ${a.target === 'ALL' ? 'الجميع' : 'الأساتذة'}</span>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-base sm:text-lg">${a.title}</h4>
+                    <p class="text-slate-600 text-xs sm:text-sm mt-2">${a.content}</p>
+                </div>
+            `).join('') || '<p class="text-slate-500 text-center py-6 font-bold">لا توجد إعلانات حالياً.</p>';
+
+            document.getElementById('app-container').innerHTML = `
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-amber-700"><i class="fa-solid fa-bullhorn ml-2"></i>الإعلانات الإدارية</h2>
+                    ${getTeacherHeaderInfoHTML()}
+                </div>
+                <div>${list}</div>
+            `;
+        }
+
+        function renderTeacherAttendance() {
+            if (!requireAuth('TEACHER')) return;
+            document.getElementById('app-container').innerHTML = `
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-rose-700"><i class="fa-solid fa-user-clock ml-2"></i>تتبع الغياب</h2>
+                    ${getTeacherHeaderInfoHTML()}
+                </div>
+                ${buildClassStudentSelectorHTML()}
+                <div class="glass-card p-4 sm:p-5 rounded-xl space-y-3 max-w-2xl border border-slate-300">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-slate-700 font-bold mb-1">التاريخ:</label>
+                            <input type="date" id="att-date" value="${new Date().toISOString().split('T')[0]}" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-700 font-bold mb-1">الحصة:</label>
+                            <input type="text" id="att-session" placeholder="مثال: 8:30 - 10:30" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-slate-700 font-bold mb-1">نوع الغياب:</label>
+                            <select id="att-type" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                                <option value="غياب">غياب كامل</option>
+                                <option value="تأخر">تأخر</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-700 font-bold mb-1">التبرير:</label>
+                            <select id="att-justified" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                                <option value="غير مبرر">غير مبرر</option>
+                                <option value="مبرر">مبرر</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">ملاحظة:</label>
+                        <textarea id="att-note" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm" rows="2"></textarea>
+                    </div>
+                    <button onclick="saveAttendanceRecord()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 font-bold rounded-lg text-white text-xs sm:text-sm">حفظ الغياب</button>
+                </div>
+            `;
+        }
+
+        function saveAttendanceRecord() {
+            const massarId = document.getElementById('teacher-student-select').value;
+            if (!massarId) return alert('يرجى اختيار التلميذ (ة) أولاً.');
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massarId).trim());
+            appData.attendance.push({
+                massarId,
+                studentName: student ? `${student.firstName} ${student.lastName}` : 'تلميذ (ة)',
+                className: student ? student.className : '',
+                teacherPpr: currentSession.user.ppr,
+                teacherName: currentSession.user.name,
+                date: document.getElementById('att-date').value,
+                session: document.getElementById('att-session').value,
+                type: document.getElementById('att-type').value,
+                justified: document.getElementById('att-justified').value,
+                note: document.getElementById('att-note').value
+            });
+            saveData();
+            alert('تم تسجيل الغياب بنجاح.');
+            navigateTo(renderTeacherDashboard);
+        }
+
+        function renderTeacherBehavior() {
+            if (!requireAuth('TEACHER')) return;
+            document.getElementById('app-container').innerHTML = `
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-sky-700"><i class="fa-solid fa-shield-halved ml-2"></i>تتبع السلوك</h2>
+                    ${getTeacherHeaderInfoHTML()}
+                </div>
+                ${buildClassStudentSelectorHTML()}
+                <div class="glass-card p-4 sm:p-5 rounded-xl space-y-3 max-w-2xl border border-slate-300">
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">التاريخ:</label>
+                        <input type="date" id="beh-date" value="${new Date().toISOString().split('T')[0]}" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">نوع السلوك:</label>
+                        <select id="beh-type" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                            <option value="إيجابي">سلوك إيجابي / تميز</option>
+                            <option value="شغب">شغب / إخلال بالنظام</option>
+                            <option value="عدم احترام">عدم احترام الأطر</option>
+                            <option value="إحداث ضوضاء">إحداث ضوضاء</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">وصف السلوك:</label>
+                        <textarea id="beh-desc" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm" rows="2"></textarea>
+                    </div>
+                    <button onclick="saveBehaviorRecord()" class="w-full py-2.5 bg-sky-600 hover:bg-sky-700 font-bold rounded-lg text-white text-xs sm:text-sm">حفظ السلوك</button>
+                </div>
+            `;
+        }
+
+        function saveBehaviorRecord() {
+            const massarId = document.getElementById('teacher-student-select').value;
+            if (!massarId) return alert('يرجى اختيار التلميذ (ة).');
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massarId).trim());
+            appData.behavior.push({
+                massarId,
+                studentName: student ? `${student.firstName} ${student.lastName}` : 'تلميذ (ة)',
+                className: student ? student.className : '',
+                teacherName: currentSession.user.name,
+                date: document.getElementById('beh-date').value,
+                type: document.getElementById('beh-type').value,
+                description: document.getElementById('beh-desc').value
+            });
+            saveData();
+            alert('تم تسجيل السلوك بنجاح.');
+            navigateTo(renderTeacherDashboard);
+        }
+
+        function renderTeacherHomework() {
+            if (!requireAuth('TEACHER')) return;
+            document.getElementById('app-container').innerHTML = `
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-purple-700"><i class="fa-solid fa-book-open ml-2"></i>تتبع الواجبات</h2>
+                    ${getTeacherHeaderInfoHTML()}
+                </div>
+                ${buildClassStudentSelectorHTML()}
+                <div class="glass-card p-4 sm:p-5 rounded-xl space-y-3 max-w-2xl border border-slate-300">
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">الواجب / التمرين:</label>
+                        <input type="text" id="hw-title" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">تاريخ الواجب:</label>
+                        <input type="date" id="hw-date" value="${new Date().toISOString().split('T')[0]}" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">حالة الإنجاز:</label>
+                        <select id="hw-status" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                            <option value="منجز">منجز بشكل كامل</option>
+                            <option value="منجز جزئيا">منجز جزئياً</option>
+                            <option value="غير منجز">غير منجز</option>
+                        </select>
+                    </div>
+                    <button onclick="saveHomeworkRecord()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 font-bold rounded-lg text-white text-xs sm:text-sm">حفظ الواجب</button>
+                </div>
+            `;
+        }
+
+        function saveHomeworkRecord() {
+            const massarId = document.getElementById('teacher-student-select').value;
+            if (!massarId) return alert('يرجى اختيار التلميذ (ة).');
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massarId).trim());
+            appData.homework.push({
+                massarId,
+                studentName: student ? `${student.firstName} ${student.lastName}` : 'تلميذ (ة)',
+                className: student ? student.className : '',
+                teacherName: currentSession.user.name,
+                title: document.getElementById('hw-title').value,
+                date: document.getElementById('hw-date').value,
+                status: document.getElementById('hw-status').value
+            });
+            saveData();
+            alert('تم تسجيل الواجب.');
+            navigateTo(renderTeacherDashboard);
+        }
+
+        function renderTeacherNotes() {
+            if (!requireAuth('TEACHER')) return;
+            document.getElementById('app-container').innerHTML = `
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-emerald-700"><i class="fa-solid fa-note-sticky ml-2"></i>ملاحظات حول التلميذ (ة)</h2>
+                    ${getTeacherHeaderInfoHTML()}
+                </div>
+                ${buildClassStudentSelectorHTML()}
+                <div class="glass-card p-4 sm:p-5 rounded-xl space-y-3 max-w-2xl border border-slate-300">
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">نص الملاحظة:</label>
+                        <textarea id="note-text" rows="3" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm"></textarea>
+                    </div>
+                    <button onclick="saveNoteRecord()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 font-bold rounded-lg text-white text-xs sm:text-sm">حفظ الملاحظة</button>
+                </div>
+            `;
+        }
+
+        function saveNoteRecord() {
+            const massarId = document.getElementById('teacher-student-select').value;
+            if (!massarId) return alert('يرجى اختيار التلميذ (ة).');
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massarId).trim());
+            appData.notes.push({
+                massarId,
+                studentName: student ? `${student.firstName} ${student.lastName}` : 'تلميذ (ة)',
+                className: student ? student.className : '',
+                teacherName: currentSession.user.name,
+                subject: currentSession.user.subject,
+                date: new Date().toISOString().split('T')[0],
+                text: document.getElementById('note-text').value
+            });
+            saveData();
+            alert('تم حفظ الملاحظة.');
+            navigateTo(renderTeacherDashboard);
+        }
+
+        function renderTeacherFailureRisk() {
+            if (!requireAuth('TEACHER')) return;
+            document.getElementById('app-container').innerHTML = `
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-orange-700"><i class="fa-solid fa-triangle-exclamation ml-2"></i>التلاميذ المهددون بالفشل</h2>
+                    ${getTeacherHeaderInfoHTML()}
+                </div>
+                ${buildClassStudentSelectorHTML()}
+                <div class="glass-card p-4 sm:p-5 rounded-xl space-y-3 max-w-2xl border border-slate-300">
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">سبب التهديد بالفشل الدراسي:</label>
+                        <select id="risk-reason" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                            <option value="بسبب السن">بسبب السن (تجاوز السن القانوني)</option>
+                            <option value="بسبب سنوات التكرار">بسبب سنوات التكرار المتعددة</option>
+                        </select>
+                    </div>
+                    <button onclick="saveFailureRiskRecord()" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 font-bold rounded-lg text-white text-xs sm:text-sm">إدراج في قائمة التهديد بالفشل</button>
+                </div>
+            `;
+        }
+
+        function saveFailureRiskRecord() {
+            const massarId = document.getElementById('teacher-student-select').value;
+            if (!massarId) return alert('يرجى اختيار التلميذ (ة).');
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massarId).trim());
+            appData.failureRisk.push({
+                massarId,
+                studentName: student ? `${student.firstName} ${student.lastName}` : 'تلميذ (ة)',
+                className: student ? student.className : '',
+                teacherName: currentSession.user.name,
+                reason: document.getElementById('risk-reason').value,
+                date: new Date().toISOString().split('T')[0]
+            });
+            saveData();
+            alert('تم تسجيل المعطيات وإرسالها للإدارة.');
+            navigateTo(renderTeacherDashboard);
+        }
+
+        // -------------------------------------------------------------
+        // ADMINISTRATION DASHBOARD & MODULES
+        // -------------------------------------------------------------
+        function renderAdminDashboard() {
+            if (!requireAuth('ADMIN')) return;
+            const container = document.getElementById('app-container');
+            const admin = currentSession.user;
+            container.innerHTML = `
+                <div class="glass-card p-4 rounded-2xl mb-6 flex flex-wrap justify-between items-center gap-4 border-r-4 border-blue-600">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-bold text-blue-800">${admin.name || 'إطاري إداري'}</h2>
+                        <p class="text-xs sm:text-sm text-slate-600 font-semibold">الصفة: <span class="text-slate-900 font-bold">${admin.role || 'إدارة'}</span></p>
+                    </div>
+                    <div class="flex gap-2 no-print">
+                        <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-print"></i> طباعة الصفحة
+                        </button>
+                        <button onclick="renderChangePasswordModal()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-key"></i> تغيير رمز الدخول
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <button onclick="navigateTo(renderAdminAnnouncements)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-bullhorn block text-xl mb-1 text-amber-600"></i><span class="text-xs">1. الإعلانات</span>
+                    </button>
+                    <button onclick="navigateTo(renderAdminStudents)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-graduation-cap block text-xl mb-1 text-emerald-600"></i><span class="text-xs">2. قائمة التلاميذ</span>
+                    </button>
+                    <button onclick="navigateTo(renderAdminTeachers)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-chalkboard-user block text-xl mb-1 text-purple-600"></i><span class="text-xs">3. الأساتذة</span>
+                    </button>
+                    <button onclick="navigateTo(renderAdminStaff)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-user-gear block text-xl mb-1 text-indigo-600"></i><span class="text-xs">4. الأطر الإدارية</span>
+                    </button>
+                    <button onclick="navigateTo(renderAdminClasses)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-users-rectangle block text-xl mb-1 text-teal-600"></i><span class="text-xs">5. الأقسام</span>
+                    </button>
+                    <button onclick="navigateTo(renderAdminSearch)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-magnifying-glass block text-xl mb-1 text-sky-600"></i><span class="text-xs">6. البحث</span>
+                    </button>
+                    <button onclick="navigateTo(renderAdminActions)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-gavel block text-xl mb-1 text-rose-600"></i><span class="text-xs">7. الإجراءات الإدارية</span>
+                    </button>
+                    <button onclick="navigateTo(renderAdminAttendance)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-user-clock block text-xl mb-1 text-rose-600"></i><span class="text-xs">8. سجل الغياب</span>
+                    </button>
+                    <button onclick="navigateTo(renderAdminBehavior)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-shield-halved block text-xl mb-1 text-sky-600"></i><span class="text-xs">9. سجل السلوك</span>
+                    </button>
+                    <button onclick="navigateTo(renderAdminHomework)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-book-open block text-xl mb-1 text-purple-600"></i><span class="text-xs">10. تتبع الواجبات</span>
+                    </button>
+                    <button onclick="navigateTo(renderAdminNotes)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-note-sticky block text-xl mb-1 text-emerald-600"></i><span class="text-xs">11. الملاحظات</span>
+                    </button>
+                    <button onclick="navigateTo(renderAdminFailureRisk)" class="glass-card p-4 rounded-xl hover:bg-slate-100 text-center font-bold text-slate-800 border border-slate-300">
+                        <i class="fa-solid fa-triangle-exclamation block text-xl mb-1 text-orange-600"></i><span class="text-xs">12. المهددون بالفشل</span>
+                    </button>
+                </div>
+            `;
+        }
+
+        // أزرار التحكم والعمليات المشتركة (إضافة، تعديل، حذف) المضافة للنوافذ الإدارية الست
+        function getActionButtonsToolbarHTML(addFnName, editFnName, deleteFnName) {
+            return `
+                <div class="flex items-center gap-2 mb-4 no-print">
+                    <button onclick="${addFnName}()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded shadow flex items-center gap-1">
+                        <i class="fa-solid fa-plus text-[10px]"></i> إضافة
+                    </button>
+                    <button onclick="${editFnName}()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-1.5 rounded shadow flex items-center gap-1">
+                        <i class="fa-solid fa-pen-to-square text-[10px]"></i> تعديل
+                    </button>
+                    <button onclick="${deleteFnName}()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-1.5 rounded shadow flex items-center gap-1">
+                        <i class="fa-solid fa-trash text-[10px]"></i> حذف
+                    </button>
+                </div>
+            `;
+        }
+
+        // 1. الإعلانات
+        function renderAdminAnnouncements() {
+            if (!requireAuth('ADMIN')) return;
+            let list = appData.announcements.map((a, i) => `
+                <div class="glass-card p-4 rounded-xl mb-3 flex justify-between items-center border border-slate-300">
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-sm sm:text-base">${a.title}</h4>
+                        <p class="text-xs text-slate-500">الفئة: ${a.target} | التاريخ: ${a.date}</p>
+                    </div>
+                    <div class="flex gap-1 no-print">
+                        <button onclick="editAnnouncementModal(${i})" class="text-amber-700 hover:text-amber-900 text-xs font-bold px-2.5 py-1 bg-amber-100 rounded border border-amber-300">تعديل</button>
+                        <button onclick="deleteAnnouncement(${i})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2.5 py-1 bg-rose-100 rounded border border-rose-300">حذف</button>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-slate-500 font-bold text-xs sm:text-sm">لا توجد إعلانات حالياً.</p>';
+
+            document.getElementById('app-container').innerHTML = `
+                ${getAdminHeaderHTML('إدارة الإعلانات', 'fa-solid fa-bullhorn', 'text-amber-700')}
+                <div class="glass-card p-4 sm:p-6 rounded-xl mb-6 max-w-2xl border border-slate-300">
+                    <h3 class="font-bold text-slate-800 mb-3 text-sm sm:text-base">إضافة إعلان جديد</h3>
+                    <input type="text" id="anc-title" placeholder="عنوان الإعلان" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg font-bold mb-3 text-xs sm:text-sm">
+                    <textarea id="anc-content" placeholder="محتوى الإعلان..." class="w-full p-2.5 bg-white border border-slate-300 rounded-lg mb-3 text-xs sm:text-sm" rows="3"></textarea>
+                    <select id="anc-target" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg font-bold mb-4 text-xs sm:text-sm">
+                        <option value="ALL">الجميع</option>
+                        <option value="TEACHERS">الأساتذة فقط</option>
+                    </select>
+                    <button onclick="saveAnnouncement()" class="w-full py-2.5 bg-amber-600 hover:bg-amber-700 font-bold rounded-lg text-white text-xs sm:text-sm">نشر الإعلان</button>
+                </div>
+                <div>${list}</div>
+            `;
+        }
+
+        function saveAnnouncement() {
+            const title = document.getElementById('anc-title').value;
+            const content = document.getElementById('anc-content').value;
+            const target = document.getElementById('anc-target').value;
+            if (!title) return alert('يرجى إدخال العنوان');
+            appData.announcements.push({ title, content, target, date: new Date().toISOString().split('T')[0] });
+            saveData();
+            renderAdminAnnouncements();
+        }
+
+        function editAnnouncementModal(i) {
+            const a = appData.announcements[i];
+            const title = prompt('تعديل عنوان الإعلان:', a.title);
+            if (title === null) return;
+            const content = prompt('تعديل محتوى الإعلان:', a.content);
+            if (content === null) return;
+
+            appData.announcements[i].title = title;
+            appData.announcements[i].content = content;
+            saveData();
+            renderAdminAnnouncements();
+        }
+
+        function deleteAnnouncement(index) {
+            if (confirm('هل أنت تأكد من حذف الإعلان؟')) {
+                appData.announcements.splice(index, 1);
+                saveData();
+                renderAdminAnnouncements();
+            }
+        }
+
+        // 2. قائمة التلاميذ
+        function renderAdminStudents() {
+            if (!requireAuth('ADMIN')) return;
+            removeDuplicateStudents();
+            let rows = appData.students.map((s, idx) => `
+                <tr class="border-b border-slate-200 hover:bg-slate-100">
+                    <td class="p-2 font-mono text-xs">${s.orderNum || '-'}</td>
+                    <td class="p-2 font-mono text-xs text-amber-700 font-bold">${s.massarId}</td>
+                    <td class="p-2 font-bold text-xs">${s.lastName}</td>
+                    <td class="p-2 text-xs">${s.firstName}</td>
+                    <td class="p-2 text-xs">${s.gender || '-'}</td>
+                    <td class="p-2 font-mono text-xs">${s.birthDate || '-'}</td>
+                    <td class="p-2 text-xs">${s.birthPlace || '-'}</td>
+                    <td class="p-2 text-xs font-bold text-emerald-700">${s.className || '-'}</td>
+                    <td class="p-2 text-xs font-bold text-slate-600">${s.note || 'متمدرس'}</td>
+                    <td class="p-2 flex gap-1 no-print">
+                        <button onclick="renderStudentProfile('${s.massarId}')" class="bg-sky-600 hover:bg-sky-700 text-white text-[10px] font-bold px-2 py-1 rounded">الملف</button>
+                        <button onclick="editStudentModal(${idx})" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold px-2 py-1 rounded">تعديل</button>
+                        <button onclick="deleteStudent(${idx})" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2 py-1 rounded">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg sm:text-xl font-black text-emerald-800"><i class="fa-solid fa-graduation-cap ml-2"></i>قائمة التلاميذ (${appData.students.length})</h2>
+                    <div class="flex flex-wrap gap-2 no-print">
+                        <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow"><i class="fa-solid fa-print ml-1"></i>طباعة</button>
+                        <button onclick="document.getElementById('global-excel-students-input').click()" class="bg-green-600 hover:bg-green-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow"><i class="fa-solid fa-file-excel ml-1"></i>استيراد Excel</button>
+                        <button onclick="addStudentModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow"><i class="fa-solid fa-plus ml-1"></i>إضافة تلميذ (ة)</button>
+                        <button onclick="clearAllStudents()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow"><i class="fa-solid fa-trash-can ml-1"></i>مسح اللائحة كاملة</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto max-h-[65vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-2 whitespace-nowrap">الرقم الترتيبي</th>
+                                <th class="p-2 whitespace-nowrap">رمز مسار</th>
+                                <th class="p-2 whitespace-nowrap">النسب</th>
+                                <th class="p-2 whitespace-nowrap">الاسم</th>
+                                <th class="p-2 whitespace-nowrap">النوع</th>
+                                <th class="p-2 whitespace-nowrap">تاريخ الإزدياد</th>
+                                <th class="p-2 whitespace-nowrap">مكان الإزدياد</th>
+                                <th class="p-2 whitespace-nowrap">القسم</th>
+                                <th class="p-2 whitespace-nowrap">ملاحظة</th>
+                                <th class="p-2 whitespace-nowrap no-print">خيارات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="10" class="text-center p-6 text-slate-500 font-bold">لا يوجد تلاميذ حالياً. يمكنك استيراد ملف Excel أو إضافة تلميذ (ة).</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function handleExcelStudentsUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = new Uint8Array(evt.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    let importedCount = 0;
+
+                    workbook.SheetNames.forEach(sheetName => {
+                        const worksheet = workbook.Sheets[sheetName];
+                        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                        const assignedSheetClass = OFFICIAL_CLASSES.includes(sheetName.trim()) ? sheetName.trim() : OFFICIAL_CLASSES[0];
+
+                        for (let i = 1; i < json.length; i++) {
+                            const row = json[i];
+                            if (!row || row.length === 0) continue;
+
+                            const student = {
+                                orderNum: row[0] || '',
+                                massarId: String(row[1] || row[0] || '').trim(),
+                                lastName: row[2] || '',
+                                firstName: row[3] || '',
+                                gender: row[4] || '',
+                                birthDate: row[5] || '',
+                                birthPlace: row[6] || '',
+                                className: row[7] || assignedSheetClass,
+                                note: row[8] || 'متمدرس'
+                            };
+
+                            if (student.massarId) {
+                                appData.students.push(student);
+                                importedCount++;
+                            }
+                        }
+                    });
+
+                    removeDuplicateStudents();
+                    saveData();
+                    alert(`تمت معالجة الاستيراد بنجاح! إجمالي المضاف أو المحدث: ${importedCount} تلميذ (ة).`);
+                    if (currentSession && currentSession.role === 'ADMIN') {
+                        renderAdminStudents();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('حدث خطأ أثناء قراءة ملف إكسيل التلاميذ.');
+                }
+                e.target.value = '';
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function clearAllStudents() {
+            if (appData.students.length === 0) {
+                alert('قائمة التلاميذ فارغة بالفعل.');
+                return;
+            }
+            if (confirm('هل أنت متأكد تماماً من رغبتك في مسح لائحة التلاميذ كاملة؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                appData.students = [];
+                saveData();
+                renderAdminStudents();
+                alert('تم مسح لائحة التلاميذ بالكامل.');
+            }
+        }
+
+        function addStudentModal() {
+            const modal = document.createElement('div');
+            modal.id = 'student-modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            let classOpts = OFFICIAL_CLASSES.map(c => `<option value="${c}">${c}</option>`).join('');
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-4 sm:p-6 max-w-lg w-full shadow-2xl border border-slate-300 max-h-[90vh] overflow-y-auto">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-user-plus ml-2 text-emerald-600"></i>إضافة تلميذ (ة) جديد</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                        <div><label class="block text-xs font-bold mb-1">الرقم الترتيبي:</label><input type="text" id="m-ord" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                        <div><label class="block text-xs font-bold mb-1">رمز مسار:</label><input type="text" id="m-massar" class="w-full p-2 border rounded text-xs sm:text-sm font-mono"></div>
+                        <div><label class="block text-xs font-bold mb-1">النسب:</label><input type="text" id="m-last" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                        <div><label class="block text-xs font-bold mb-1">الاسم:</label><input type="text" id="m-first" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                        <div><label class="block text-xs font-bold mb-1">النوع:</label><select id="m-gender" class="w-full p-2 border rounded text-xs sm:text-sm"><option value="ذكر">ذكر</option><option value="أنثى">أنثى</option></select></div>
+                        <div><label class="block text-xs font-bold mb-1">تاريخ الإزدياد:</label><input type="text" id="m-bdate" placeholder="DD/MM/YYYY" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                        <div><label class="block text-xs font-bold mb-1">مكان الإزدياد:</label><input type="text" id="m-bplace" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                        <div><label class="block text-xs font-bold mb-1">القسم:</label><select id="m-class" class="w-full p-2 border rounded text-xs sm:text-sm">${classOpts}</select></div>
+                        <div class="sm:col-span-2"><label class="block text-xs font-bold mb-1">ملاحظة:</label><input type="text" id="m-note" value="متمدرس" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="saveStudentFromModal()" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-lg">إضافة</button>
+                        <button onclick="document.getElementById('student-modal').remove()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs sm:text-sm rounded-lg">إلغاء</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function saveStudentFromModal(editIdx = null) {
+            const massarId = document.getElementById('m-massar').value.trim();
+            if (!massarId) return alert('رمز مسار مطلوب');
+            const studentObj = {
+                orderNum: document.getElementById('m-ord').value.trim(),
+                massarId: massarId,
+                lastName: document.getElementById('m-last').value.trim(),
+                firstName: document.getElementById('m-first').value.trim(),
+                gender: document.getElementById('m-gender').value,
+                birthDate: document.getElementById('m-bdate').value.trim(),
+                birthPlace: document.getElementById('m-bplace').value.trim(),
+                className: document.getElementById('m-class').value,
+                note: document.getElementById('m-note').value.trim() || 'متمدرس'
+            };
+
+            if (editIdx !== null) {
+                appData.students[editIdx] = studentObj;
+            } else {
+                appData.students.push(studentObj);
+            }
+            removeDuplicateStudents();
+            saveData();
+            document.getElementById('student-modal').remove();
+            renderAdminStudents();
+        }
+
+        function editStudentModal(idx) {
+            const s = appData.students[idx];
+            addStudentModal();
+            document.getElementById('m-ord').value = s.orderNum || '';
+            document.getElementById('m-massar').value = s.massarId || '';
+            document.getElementById('m-last').value = s.lastName || '';
+            document.getElementById('m-first').value = s.firstName || '';
+            document.getElementById('m-gender').value = s.gender || 'ذكر';
+            document.getElementById('m-bdate').value = s.birthDate || '';
+            document.getElementById('m-bplace').value = s.birthPlace || '';
+            document.getElementById('m-class').value = s.className || OFFICIAL_CLASSES[0];
+            document.getElementById('m-note').value = s.note || 'متمدرس';
+
+            const btn = document.querySelector('#student-modal button[onclick*="saveStudentFromModal"]');
+            btn.onclick = () => saveStudentFromModal(idx);
+            btn.innerText = 'تحديث المعطيات';
+        }
+
+        function deleteStudent(idx) {
+            if (confirm('هل أنت تأكد من حذف التلميذ (ة)؟')) {
+                appData.students.splice(idx, 1);
+                saveData();
+                renderAdminStudents();
+            }
+        }
+
+        // ملف التلميذ الشامل مع تقليص حجم الشريط العلوي، وفصل المهددين بالفشل عن الإجراءات الإدارية تماماً
+        function renderStudentProfile(massarId) {
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massarId).trim());
+            if (!student) return alert('التلميذ (ة) غير موجود.');
+
+            const att = appData.attendance.filter(a => String(a.massarId).trim() === String(massarId).trim());
+            const beh = appData.behavior.filter(b => String(b.massarId).trim() === String(massarId).trim());
+            const hw = appData.homework.filter(h => String(h.massarId).trim() === String(massarId).trim());
+            const notes = appData.notes.filter(n => String(n.massarId).trim() === String(massarId).trim());
+            const risks = appData.failureRisk.filter(r => String(r.massarId).trim() === String(massarId).trim());
+            const actions = appData.adminActions.filter(a => String(a.massarId).trim() === String(massarId).trim());
+
+            document.getElementById('app-container').innerHTML = `
+                <!-- تقليص حجم الشريط بنافذة ملف التلميذ -->
+                <div class="bg-slate-800 text-white px-4 py-2.5 rounded-lg shadow-sm flex flex-wrap justify-between items-center text-xs mb-4 border border-slate-700">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="bg-indigo-600 px-2 py-0.5 rounded text-[11px] font-bold">ملف التلميذ</span>
+                        <span><strong class="text-indigo-300">الاسم الكامل:</strong> ${student.lastName} ${student.firstName}</span>
+                        <span><strong class="text-indigo-300">رمز مسار:</strong> <span class="font-mono text-amber-300">${student.massarId}</span></span>
+                        <span><strong class="text-indigo-300">القسم:</strong> ${student.className}</span>
+                        <span><strong class="text-indigo-300">الحالة:</strong> ${student.note || 'متمدرس'}</span>
+                    </div>
+                    <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 text-white text-[11px] font-bold px-2.5 py-1 rounded shadow no-print"><i class="fa-solid fa-print ml-1"></i>طباعة الملف</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                    <div class="glass-card p-4 rounded-xl border border-slate-300">
+                        <h3 class="font-bold text-rose-700 border-b border-slate-200 pb-2 mb-3 text-sm sm:text-base"><i class="fa-solid fa-user-clock ml-2"></i>سجل الغياب (${att.length})</h3>
+                        ${att.map(a => `<div class="text-xs bg-slate-100 p-2 rounded mb-2 border border-slate-200"><b>${a.date}</b> - ${a.type} (${a.justified}) - الأستاذ (ة): ${a.teacherName}${a.note?'- '+a.note:''}</div>`).join('') || '<p class="text-xs text-slate-400">لا يوجد سجل غياب</p>'}
+                    </div>
+
+                    <div class="glass-card p-4 rounded-xl border border-slate-300">
+                        <h3 class="font-bold text-sky-700 border-b border-slate-200 pb-2 mb-3 text-sm sm:text-base"><i class="fa-solid fa-shield-halved ml-2"></i>سجل السلوك (${beh.length})</h3>
+                        ${beh.map(b => `<div class="text-xs bg-slate-100 p-2 rounded mb-2 border border-slate-200"><b>${b.date}</b> - ${b.type}:${b.description}</div>`).join('') || '<p class="text-xs text-slate-400">لا يوجد سجل سلوك</p>'}
+                    </div>
+
+                    <div class="glass-card p-4 rounded-xl border border-slate-300">
+                        <h3 class="font-bold text-purple-700 border-b border-slate-200 pb-2 mb-3 text-sm sm:text-base"><i class="fa-solid fa-book-open ml-2"></i>تتبع الواجبات المنزلية (${hw.length})</h3>
+                        ${hw.map(h => `<div class="text-xs bg-slate-100 p-2 rounded mb-2 border border-slate-200"><b>${h.date}</b> -${h.title}: <span class="font-bold">${h.status}</span> (الأستاذ (ة): ${h.teacherName})</div>`).join('') || '<p class="text-xs text-slate-400">لا يوجد سجل واجبات</p>'}
+                    </div>
+
+                    <div class="glass-card p-4 rounded-xl border border-slate-300">
+                        <h3 class="font-bold text-emerald-700 border-b border-slate-200 pb-2 mb-3 text-sm sm:text-base"><i class="fa-solid fa-note-sticky ml-2"></i>ملاحظات الأساتذة (${notes.length})</h3>
+                        ${notes.map(n => `<div class="text-xs bg-slate-100 p-2 rounded mb-2 border border-slate-200"><b>${n.teacherName} (${n.subject}):</b>${n.text}</div>`).join('') || '<p class="text-xs text-slate-400">لا توجد ملاحظات</p>'}
+                    </div>
+
+                    <!-- فصل المعلومات المتعلقة بالمهددين بالفشل عن الإجراءات الإدارية في بطاقات مستقلة ومنفصلة -->
+                    <div class="glass-card p-4 rounded-xl border border-slate-300">
+                        <h3 class="font-bold text-orange-700 border-b border-slate-200 pb-2 mb-3 text-sm sm:text-base"><i class="fa-solid fa-triangle-exclamation ml-2"></i>المهددون بالفشل (${risks.length})</h3>
+                        ${risks.map(r => `<div class="text-xs bg-orange-100 border border-orange-300 p-2 rounded mb-2 text-orange-900 font-bold">سبب التهديد: ${r.reason} (بتاريخ ${r.date} - بواسطة ${r.teacherName})</div>`).join('') || '<p class="text-xs text-slate-400">لا يوجد تهديد بالفشل مسجل</p>'}
+                    </div>
+
+                    <div class="glass-card p-4 rounded-xl border border-slate-300">
+                        <h3 class="font-bold text-blue-700 border-b border-slate-200 pb-2 mb-3 text-sm sm:text-base"><i class="fa-solid fa-gavel ml-2"></i>الإجراءات الإدارية المتخذة (${actions.length})</h3>
+                        ${actions.map(a => `<div class="text-xs bg-blue-50 border border-blue-200 p-2 rounded mb-2 text-blue-900"><b>${a.date}:</b> ${a.action} (${a.notes || ''}) - المسؤول: ${a.adminName}</div>`).join('') || '<p class="text-xs text-slate-400">لا توجد إجراءات إدارية مسجلة</p>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 3. الأساتذة
+        function renderAdminTeachers() {
+            if (!requireAuth('ADMIN')) return;
+            removeDuplicateTeachers();
+            let rows = appData.teachers.map((t, idx) => `
+                <tr class="border-b border-slate-200 hover:bg-slate-100">
+                    <td class="p-2 font-mono text-xs">${t.orderNum || '-'}</td>
+                    <td class="p-2 font-bold text-xs text-purple-700">${t.subject || '-'}</td>
+                    <td class="p-2 font-bold text-xs">${t.name}</td>
+                    <td class="p-2 font-mono text-xs text-amber-700 font-bold">${t.ppr}</td>
+                    <td class="p-2 text-xs">${t.framework || '-'}</td>
+                    <td class="p-2 font-mono text-xs">${t.phone || '-'}</td>
+                    <td class="p-2 text-xs font-bold">${t.assignedClasses ? t.assignedClasses.join(', ') : '-'}</td>
+                    <td class="p-2 flex gap-1 no-print">
+                        <button onclick="editTeacherModal(${idx})" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold px-2 py-1 rounded">تعديل</button>
+                        <button onclick="deleteTeacher(${idx})" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2 py-1 rounded">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg sm:text-xl font-bold text-purple-700"><i class="fa-solid fa-chalkboard-user ml-2"></i>قائمة الأساتذة (${appData.teachers.length})</h2>
+                    <div class="flex flex-wrap gap-2 no-print">
+                        <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow"><i class="fa-solid fa-print ml-1"></i>طباعة</button>
+                        <button onclick="document.getElementById('global-excel-teachers-input').click()" class="bg-green-600 hover:bg-green-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow"><i class="fa-solid fa-file-excel ml-1"></i>استيراد Excel</button>
+                        <button onclick="addTeacherModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow"><i class="fa-solid fa-plus ml-1"></i>إضافة أستاذ (ة)</button>
+                        <button onclick="clearAllTeachers()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow"><i class="fa-solid fa-trash-can ml-1"></i>مسح اللائحة كاملة</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto max-h-[65vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-2 whitespace-nowrap">الرقم الترتيبي</th>
+                                <th class="p-2 whitespace-nowrap">المادة</th>
+                                <th class="p-2 whitespace-nowrap">الاسم والنسب</th>
+                                <th class="p-2 whitespace-nowrap">رقم التأجير</th>
+                                <th class="p-2 whitespace-nowrap">الإطار</th>
+                                <th class="p-2 whitespace-nowrap">الهاتف</th>
+                                <th class="p-2 whitespace-nowrap">الأقسام المسندة</th>
+                                <th class="p-2 whitespace-nowrap no-print">خيارات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="8" class="text-center p-6 text-slate-500 font-bold">لا يوجد أساتذة مضافون.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function handleExcelTeachersUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = new Uint8Array(evt.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    let importedCount = 0;
+
+                    workbook.SheetNames.forEach(sheetName => {
+                        const worksheet = workbook.Sheets[sheetName];
+                        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                        for (let i = 1; i < json.length; i++) {
+                            const row = json[i];
+                            if (!row || row.length === 0) continue;
+
+                            const teacher = {
+                                orderNum: row[0] || '',
+                                subject: row[1] || '',
+                                name: row[2] || '',
+                                ppr: String(row[3] || '').trim(),
+                                framework: row[4] || '',
+                                phone: String(row[5] || '').trim(),
+                                assignedClasses: row[6] ? String(row[6]).split(',').map(c => c.trim()) : OFFICIAL_CLASSES.slice(0, 3),
+                                code: String(row[3] || '').trim()
+                            };
+
+                            if (teacher.ppr) {
+                                appData.teachers.push(teacher);
+                                importedCount++;
+                            }
+                        }
+                    });
+
+                    removeDuplicateTeachers();
+                    saveData();
+                    alert(`تمت معالجة استيراد الأساتذة بنجاح! إجمالي المضاف أو المحدث: ${importedCount} أستاذ (ة).`);
+                    if (currentSession && currentSession.role === 'ADMIN') {
+                        renderAdminTeachers();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('حدث خطأ أثناء قراءة ملف إكسيل الأساتذة.');
+                }
+                e.target.value = '';
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function clearAllTeachers() {
+            if (appData.teachers.length === 0) {
+                alert('قائمة الأساتذة فارغة بالفعل.');
+                return;
+            }
+            if (confirm('هل أنت متأكد تماماً من رغبتك في مسح لائحة الأساتذة كاملة؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                appData.teachers = [];
+                saveData();
+                renderAdminTeachers();
+                alert('تم مسح لائحة الأساتذة بالكامل.');
+            }
+        }
+
+        function addTeacherModal() {
+            const modal = document.createElement('div');
+            modal.id = 'teacher-modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-4 sm:p-6 max-w-lg w-full shadow-2xl border border-slate-300 max-h-[90vh] overflow-y-auto">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fa-solid fa-user-plus ml-2 text-purple-600"></i>إضافة أستاذ (ة) جديد</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                        <div><label class="block text-xs font-bold mb-1">الرقم الترتيبي:</label><input type="text" id="tm-ord" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                        <div><label class="block text-xs font-bold mb-1">المادة:</label><input type="text" id="tm-subj" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                        <div><label class="block text-xs font-bold mb-1">الاسم والنسب:</label><input type="text" id="tm-name" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                        <div><label class="block text-xs font-bold mb-1">رقم التأجير (PPR):</label><input type="text" id="tm-ppr" class="w-full p-2 border rounded text-xs sm:text-sm font-mono"></div>
+                        <div><label class="block text-xs font-bold mb-1">الإطار:</label><input type="text" id="tm-frame" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                        <div><label class="block text-xs font-bold mb-1">الهاتف:</label><input type="text" id="tm-phone" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                        <div class="sm:col-span-2"><label class="block text-xs font-bold mb-1">الأقسام المسندة (مفصولة بفاصلة):</label><input type="text" id="tm-classes" placeholder="1APIC-1, 1APIC-2" class="w-full p-2 border rounded text-xs sm:text-sm"></div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="saveTeacherFromModal()" class="flex-1 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs sm:text-sm rounded-lg">إضافة</button>
+                        <button onclick="document.getElementById('teacher-modal').remove()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs sm:text-sm rounded-lg">إلغاء</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function saveTeacherFromModal(editIdx = null) {
+            const ppr = document.getElementById('tm-ppr').value.trim();
+            if (!ppr) return alert('رقم التأجير مطلوب');
+            const classesInput = document.getElementById('tm-classes').value.trim();
+            const teacherObj = {
+                orderNum: document.getElementById('tm-ord').value.trim(),
+                subject: document.getElementById('tm-subj').value.trim(),
+                name: document.getElementById('tm-name').value.trim(),
+                ppr: ppr,
+                framework: document.getElementById('tm-frame').value.trim(),
+                phone: document.getElementById('tm-phone').value.trim(),
+                assignedClasses: classesInput ? classesInput.split(',').map(c => c.trim()) : OFFICIAL_CLASSES.slice(0, 3),
+                code: ppr
+            };
+
+            if (editIdx !== null) {
+                appData.teachers[editIdx] = teacherObj;
+            } else {
+                appData.teachers.push(teacherObj);
+            }
+            removeDuplicateTeachers();
+            saveData();
+            document.getElementById('teacher-modal').remove();
+            renderAdminTeachers();
+        }
+
+        function editTeacherModal(idx) {
+            const t = appData.teachers[idx];
+            addTeacherModal();
+            document.getElementById('tm-ord').value = t.orderNum || '';
+            document.getElementById('tm-subj').value = t.subject || '';
+            document.getElementById('tm-name').value = t.name || '';
+            document.getElementById('tm-ppr').value = t.ppr || '';
+            document.getElementById('tm-frame').value = t.framework || '';
+            document.getElementById('tm-phone').value = t.phone || '';
+            document.getElementById('tm-classes').value = t.assignedClasses ? t.assignedClasses.join(', ') : '';
+
+            const btn = document.querySelector('#teacher-modal button[onclick*="saveTeacherFromModal"]');
+            btn.onclick = () => saveTeacherFromModal(idx);
+            btn.innerText = 'تحديث المعطيات';
+        }
+
+        function deleteTeacher(idx) {
+            if (confirm('هل أنت تأكد من حذف الأستاذ (ة)؟')) {
+                appData.teachers.splice(idx, 1);
+                saveData();
+                renderAdminTeachers();
+            }
+        }
+
+        // 4. الأطر الإدارية
+        function renderAdminStaff() {
+            if (!requireAuth('ADMIN')) return;
+            let rows = appData.adminStaff.map((s, i) => `
+                <tr class="border-b border-slate-200 hover:bg-slate-100">
+                    <td class="p-3 font-bold text-xs sm:text-sm">${s.name}</td>
+                    <td class="p-3 font-bold text-indigo-700 text-xs sm:text-sm">${s.role}</td>
+                    <td class="p-3 font-mono text-amber-700 font-bold text-xs sm:text-sm">${s.ppr || s.code || '-'}</td>
+                    <td class="p-3 font-mono text-xs sm:text-sm">${s.phone || '-'}</td>
+                    <td class="p-3 flex gap-1 no-print">
+                        <button onclick="editAdminStaffModal(${i})" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-2.5 py-1 rounded shadow">تعديل</button>
+                        <button onclick="deleteAdminStaff(${i})" class="text-rose-600 font-bold text-xs bg-rose-100 px-2.5 py-1 rounded border border-rose-300">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                ${getAdminHeaderHTML('الأطر الإدارية المصرح لها', 'fa-solid fa-user-gear', 'text-indigo-700')}
+                <div class="glass-card p-4 sm:p-6 rounded-xl mb-6 max-w-2xl border border-slate-300 no-print">
+                    <h3 class="font-bold text-slate-800 mb-3 text-sm sm:text-base">إضافة إطار إداري جديد</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                        <input type="text" id="staff-name" placeholder="الاسم والنسب" class="p-2.5 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                        <input type="text" id="staff-role" placeholder="المهام / الصفة" class="p-2.5 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                        <input type="text" id="staff-ppr" placeholder="رمز الولوج / PPR" class="p-2.5 bg-white border border-slate-300 rounded-lg font-mono font-bold text-xs sm:text-sm">
+                        <input type="text" id="staff-phone" placeholder="رقم الهاتف" class="p-2.5 bg-white border border-slate-300 rounded-lg font-mono text-xs sm:text-sm">
+                    </div>
+                    <button onclick="saveAdminStaff()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 font-bold rounded-lg text-white text-xs sm:text-sm">حفظ الإطار الإداري</button>
+                </div>
+
+                <div class="overflow-x-auto max-h-[65vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-3 whitespace-nowrap">الاسم والنسب</th>
+                                <th class="p-3 whitespace-nowrap">المهمة / الصفة</th>
+                                <th class="p-3 whitespace-nowrap">رمز الولوج / PPR</th>
+                                <th class="p-3 whitespace-nowrap">الهاتف</th>
+                                <th class="p-3 whitespace-nowrap no-print">خيارات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="5" class="text-center p-6 text-slate-500 font-bold">لا يوجد أطر إدارية مسجلة حالياً.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function saveAdminStaff() {
+            const name = document.getElementById('staff-name').value.trim();
+            const role = document.getElementById('staff-role').value.trim();
+            const ppr = document.getElementById('staff-ppr').value.trim();
+            const phone = document.getElementById('staff-phone').value.trim();
+            if (!name || !role || !ppr) return alert('يرجى ملء كافة المعطيات الأساسية ورمز الولوج.');
+
+            appData.adminStaff.push({ name, role, ppr, code: ppr, phone });
+            saveData();
+            renderAdminStaff();
+        }
+
+        function editAdminStaffModal(i) {
+            const s = appData.adminStaff[i];
+            const name = prompt('تعديل الاسم والنسب:', s.name);
+            if (name === null) return;
+            const role = prompt('تعديل المهمة / الصفة:', s.role);
+            if (role === null) return;
+            const ppr = prompt('تعديل رمز الولوج / PPR:', s.ppr || s.code);
+            if (ppr === null) return;
+            const phone = prompt('تعديل رقم الهاتف:', s.phone || '');
+
+            appData.adminStaff[i] = { name, role, ppr, code: ppr, phone };
+            saveData();
+            renderAdminStaff();
+        }
+
+        function deleteAdminStaff(index) {
+            if (confirm('هل أنت تأكد من حذف الإطار الإداري؟')) {
+                appData.adminStaff.splice(index, 1);
+                saveData();
+                renderAdminStaff();
+            }
+        }
+
+        // 5. الأقسام
+        function renderAdminClasses() {
+            if (!requireAuth('ADMIN')) return;
+            let grid = OFFICIAL_CLASSES.map(c => {
+                const count = appData.students.filter(s => s.className === c).length;
+                return `
+                    <div class="glass-card p-4 rounded-xl border border-slate-300 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-slate-800">${c}</h4>
+                            <span class="text-xs font-bold text-slate-500">${count} تلميذ (ة)</span>
+                        </div>
+                        <button onclick="renderClassStudentsList('${c}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded shadow">عرض التلاميذ</button>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                ${getAdminHeaderHTML('الأقسام الرسمية (19 قسم)', 'fa-solid fa-users-rectangle', 'text-teal-700')}
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">${grid}</div>
+            `;
+        }
+
+        function renderClassStudentsList(className) {
+            if (!requireAuth('ADMIN')) return;
+            const students = appData.students.filter(s => s.className === className);
+            let rows = students.map((s, idx) => {
+                const globalIdx = appData.students.findIndex(st => st.massarId === s.massarId);
+                return `
+                    <tr class="border-b border-slate-200 hover:bg-slate-100">
+                        <td class="p-2 font-mono text-xs">${s.orderNum || '-'}</td>
+                        <td class="p-2 font-mono text-xs text-amber-700 font-bold">${s.massarId}</td>
+                        <td class="p-2 font-bold text-xs">${s.lastName}</td>
+                        <td class="p-2 text-xs">${s.firstName}</td>
+                        <td class="p-2 text-xs">${s.gender || '-'}</td>
+                        <td class="p-2 font-mono text-xs">${s.birthDate || '-'}</td>
+                        <td class="p-2 text-xs">${s.birthPlace || '-'}</td>
+                        <td class="p-2 text-xs font-bold text-slate-600">${s.note || 'متمدرس'}</td>
+                        <td class="p-2 flex gap-1 no-print">
+                            <button onclick="renderStudentProfile('${s.massarId}')" class="bg-sky-600 hover:bg-sky-700 text-white text-[10px] font-bold px-2 py-1 rounded">الملف</button>
+                            <button onclick="editStudentModal(${globalIdx})" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold px-2 py-1 rounded">تعديل</button>
+                            <button onclick="deleteStudent(${globalIdx})" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2 py-1 rounded">حذف</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg sm:text-xl font-black text-emerald-800"><i class="fa-solid fa-users ml-2"></i>تلاميذ قسم: <span class="text-amber-600">${className}</span> (${students.length} تلميذ (ة))</h2>
+                    <div class="flex items-center gap-2">
+                        <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow no-print"><i class="fa-solid fa-print ml-1"></i>طباعة</button>
+                        <button onclick="navigateTo(renderAdminClasses)" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs px-3 py-1.5 rounded border border-slate-400 no-print">الرجوع للأقسام</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto max-h-[65vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-2 whitespace-nowrap">الرقم الترتيبي</th>
+                                <th class="p-2 whitespace-nowrap">رمز مسار</th>
+                                <th class="p-2 whitespace-nowrap">النسب</th>
+                                <th class="p-2 whitespace-nowrap">الاسم</th>
+                                <th class="p-2 whitespace-nowrap">النوع</th>
+                                <th class="p-2 whitespace-nowrap">تاريخ الازدياد</th>
+                                <th class="p-2 whitespace-nowrap">مكان الازدياد</th>
+                                <th class="p-2 whitespace-nowrap">ملاحظة</th>
+                                <th class="p-2 whitespace-nowrap no-print">خيارات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="9" class="text-center p-6 text-slate-500 font-bold">لا يوجد تلاميذ مسجلون في هذا القسم حالياً.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 6. البحث
+        function renderAdminSearch() {
+            if (!requireAuth('ADMIN')) return;
+            document.getElementById('app-container').innerHTML = `
+                ${getAdminHeaderHTML('البحث الشامل عن تلميذ (ة)', 'fa-solid fa-magnifying-glass', 'text-sky-700')}
+                <div class="glass-card p-4 sm:p-6 rounded-xl mb-6 max-w-2xl border border-slate-300">
+                    <div class="flex gap-2">
+                        <input type="text" id="search-query" placeholder="ابحث بالاسم، النسب، أو رمز مسار..." class="w-full p-2.5 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                        <button onclick="executeAdminSearch()" class="px-5 bg-sky-600 hover:bg-sky-700 font-bold text-white rounded-lg text-xs sm:text-sm">بحث</button>
+                    </div>
+                </div>
+                <div id="search-results"></div>
+            `;
+        }
+
+        function executeAdminSearch() {
+            const query = document.getElementById('search-query').value.trim().toLowerCase();
+            if (!query) return alert('أدخل كلمة البحث أولاً.');
+            
+            const results = appData.students.filter(s => 
+                (s.firstName && s.firstName.toLowerCase().includes(query)) ||
+                (s.lastName && s.lastName.toLowerCase().includes(query)) ||
+                (s.massarId && s.massarId.toLowerCase().includes(query))
+            );
+
+            let rows = results.map(s => `
+                <tr class="border-b border-slate-200 hover:bg-slate-100">
+                    <td class="p-2 font-mono text-xs text-amber-700 font-bold">${s.massarId}</td>
+                    <td class="p-2 font-bold text-xs">${s.lastName} ${s.firstName}</td>
+                    <td class="p-2 text-xs font-bold text-emerald-700">${s.className}</td>
+                    <td class="p-2 text-xs">${s.birthDate || '-'}</td>
+                    <td class="p-2 no-print">
+                        <button onclick="renderStudentProfile('${s.massarId}')" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3 py-1 rounded shadow">عرض الملف الشامل</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('search-results').innerHTML = `
+                <div class="overflow-x-auto max-h-[60vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-2">رمز مسار</th>
+                                <th class="p-2">الاسم والنسب</th>
+                                <th class="p-2">القسم</th>
+                                <th class="p-2">تاريخ الإزدياد</th>
+                                <th class="p-2 no-print">خيارات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="5" class="text-center p-6 text-slate-500 font-bold">لا توجد نتائج تطابق بحثك.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 7. الإجراءات الإدارية (تجميع كامل وإظهار ضمن نافذة الإجراءات الإدارية مع أزرار الإضافة والتعديل والحذف)
+        function renderAdminActions() {
+            if (!requireAuth('ADMIN')) return;
+            let rows = appData.adminActions.map((item, idx) => `
+                <tr class="border-b border-slate-200 hover:bg-slate-100 text-xs">
+                    <td class="p-2 font-mono">${item.date || '-'}</td>
+                    <td class="p-2 font-bold">${item.studentName || '-'}</td>
+                    <td class="p-2 font-bold text-emerald-700">${item.className || '-'}</td>
+                    <td class="p-2 font-bold text-rose-700">${item.action || '-'}</td>
+                    <td class="p-2">${item.notes || '-'}</td>
+                    <td class="p-2 font-bold text-blue-700">${item.adminName || '-'}</td>
+                    <td class="p-2 flex gap-1 no-print">
+                        <button onclick="editAdminActionModal(${idx})" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold px-2 py-1 rounded">تعديل</button>
+                        <button onclick="deleteAdminAction(${idx})" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2 py-1 rounded">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                ${getAdminHeaderHTML('سجل وتجميع الإجراءات الإدارية المتخذة', 'fa-solid fa-gavel', 'text-rose-700')}
+                
+                ${getActionButtonsToolbarHTML('openAddAdminActionModal', 'openEditAdminActionPrompt', 'clearAdminActionsList')}
+
+                <div class="glass-card p-4 sm:p-5 rounded-xl space-y-3 max-w-2xl border border-slate-300 mb-6 no-print" id="admin-action-form-container">
+                    <h3 class="font-bold text-slate-800 mb-2 text-sm">إصدار أو إضافة إجراء إداري جديد</h3>
+                    ${buildAdminClassStudentSelectorHTML('onAdminClassChange')}
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">نوع الإجراء الإداري:</label>
+                        <select id="act-type" class="w-full p-2 bg-white border border-slate-300 rounded-lg font-bold text-xs sm:text-sm">
+                            <option value="تنبيه شفوي">تنبيه شفوي</option>
+                            <option value="إنذار كتابي">إنذار كتابي</option>
+                            <option value="توبيخ">توبيخ</option>
+                            <option value="استدعاء ولي الأمر">استدعاء ولي الأمر</option>
+                            <option value="التزام بقواعد النظام الداخلي">التزام بقواعد النظام الداخلي</option>
+                            <option value="عرض على مجلس الانضباط">عرض على مجلس الانضباط</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-700 font-bold mb-1">ملاحظات إضافية حول الإجراء:</label>
+                        <textarea id="act-notes" rows="2" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm"></textarea>
+                    </div>
+                    <button onclick="saveAdminActionRecord()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 font-bold rounded-lg text-white text-xs sm:text-sm">حفظ وإصدار الإجراء الإداري</button>
+                </div>
+
+                <div class="overflow-x-auto max-h-[60vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-2 whitespace-nowrap">التاريخ</th>
+                                <th class="p-2 whitespace-nowrap">التلميذ (ة)</th>
+                                <th class="p-2 whitespace-nowrap">القسم</th>
+                                <th class="p-2 whitespace-nowrap">الإجراء المتخذ</th>
+                                <th class="p-2 whitespace-nowrap">ملاحظات</th>
+                                <th class="p-2 whitespace-nowrap">المسؤول الإداري</th>
+                                <th class="p-2 whitespace-nowrap no-print">خيارات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="7" class="text-center p-6 text-slate-500 font-bold">لا توجد إجراءات إدارية مسجلة حالياً.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function openAddAdminActionModal() {
+            const formContainer = document.getElementById('admin-action-form-container');
+            if (formContainer) {
+                formContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function openEditAdminActionPrompt() {
+            if (appData.adminActions.length === 0) return alert('لا توجد إجراءات لتعديلها.');
+            const idx = prompt(`أدخل رقم السطر المراد تعديله (من 1 إلى ${appData.adminActions.length}):`);
+            if (idx === null || isNaN(idx)) return;
+            const itemIdx = parseInt(idx) - 1;
+            if (itemIdx < 0 || itemIdx >= appData.adminActions.length) return alert('رقم السطر غير صحيح.');
+            
+            editAdminActionModal(itemIdx);
+        }
+
+        function editAdminActionModal(idx) {
+            const item = appData.adminActions[idx];
+            const newAction = prompt('تعديل نوع الإجراء الإداري:', item.action);
+            if (newAction === null) return;
+            const newNotes = prompt('تعديل الملاحظات:', item.notes || '');
+            if (newNotes === null) return;
+
+            appData.adminActions[idx].action = newAction;
+            appData.adminActions[idx].notes = newNotes;
+            saveData();
+            renderAdminActions();
+        }
+
+        function deleteAdminAction(idx) {
+            if (confirm('هل أنت متأكد من حذف هذا الإجراء الإداري؟')) {
+                appData.adminActions.splice(idx, 1);
+                saveData();
+                renderAdminActions();
+            }
+        }
+
+        function clearAdminActionsList() {
+            if (appData.adminActions.length === 0) return alert('السجل فارغ بالفعل.');
+            if (confirm('هل أنت متأكد من حذف كافة الإجراءات الإدارية؟')) {
+                appData.adminActions = [];
+                saveData();
+                renderAdminActions();
+            }
+        }
+
+        function saveAdminActionRecord() {
+            const massarId = document.getElementById('admin-student-select').value;
+            if (!massarId) return alert('يرجى اختيار التلميذ (ة).');
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massarId).trim());
+            appData.adminActions.push({
+                massarId,
+                studentName: student ? `${student.firstName} ${student.lastName}` : 'تلميذ (ة)',
+                className: student ? student.className : '',
+                adminName: currentSession.user.name,
+                action: document.getElementById('act-type').value,
+                notes: document.getElementById('act-notes').value,
+                date: new Date().toISOString().split('T')[0]
+            });
+            saveData();
+            alert('تم تسجيل الإجراء الإداري بنجاح.');
+            renderAdminActions();
+        }
+
+        // نافذة الغياب مع أزرار الإضافة والتعديل والحذف
+        function renderAdminAttendance() {
+            if (!requireAuth('ADMIN')) return;
+            let rows = appData.attendance.map((item, idx) => `
+                <tr class="border-b border-slate-200 hover:bg-slate-100 text-xs">
+                    <td class="p-2 font-mono">${item.date || '-'}</td>
+                    <td class="p-2 font-bold">${item.studentName || '-'}</td>
+                    <td class="p-2 font-bold text-emerald-700">${item.className || '-'}</td>
+                    <td class="p-2">${item.type || '-'}</td>
+                    <td class="p-2">${item.justified || '-'}</td>
+                    <td class="p-2 font-bold text-purple-700">${item.teacherName || '-'}</td>
+                    <td class="p-2">${item.note || '-'}</td>
+                    <td class="p-2 flex gap-1 no-print">
+                        <button onclick="editAdminAttendanceModal(${idx})" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold px-2 py-1 rounded">تعديل</button>
+                        <button onclick="deleteAdminAttendance(${idx})" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2 py-1 rounded">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                ${getAdminHeaderHTML('سجل الغياب الإداري', 'fa-solid fa-user-clock', 'text-slate-800')}
+                ${getActionButtonsToolbarHTML('promptAddAttendance', 'promptEditAttendance', 'clearAttendanceList')}
+                <div class="overflow-x-auto max-h-[65vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-2 whitespace-nowrap">التاريخ</th>
+                                <th class="p-2 whitespace-nowrap">التلميذ (ة)</th>
+                                <th class="p-2 whitespace-nowrap">القسم</th>
+                                <th class="p-2 whitespace-nowrap">النوع</th>
+                                <th class="p-2 whitespace-nowrap">التبرير</th>
+                                <th class="p-2 whitespace-nowrap">الأستاذ</th>
+                                <th class="p-2 whitespace-nowrap">ملاحظة</th>
+                                <th class="p-2 whitespace-nowrap no-print">خيارات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="8" class="text-center p-6 text-slate-500 font-bold">لا توجد معطيات غياب مسجلة حالياً.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function promptAddAttendance() {
+            const massar = prompt('أدخل رمز مسار للتلميذ المراد إضافة غياب له:');
+            if (!massar) return;
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massar).trim());
+            if (!student) return alert('التلميذ غير موجود.');
+            const type = prompt('نوع الغياب (غياب / تأخر):', 'غياب');
+            if (!type) return;
+            const justified = prompt('التبرير (مبرر / غير مبرر):', 'غير مبرر');
+            
+            appData.attendance.push({
+                massarId: student.massarId,
+                studentName: `${student.firstName} ${student.lastName}`,
+                className: student.className,
+                teacherName: currentSession.user.name,
+                date: new Date().toISOString().split('T')[0],
+                type,
+                justified,
+                note: 'إضافة إدارية'
+            });
+            saveData();
+            renderAdminAttendance();
+        }
+
+        function promptEditAttendance() {
+            if (appData.attendance.length === 0) return alert('السجل فارغ.');
+            const idx = prompt(`أدخل رقم السطر المراد تعديله (من 1 إلى ${appData.attendance.length}):`);
+            if (idx === null || isNaN(idx)) return;
+            editAdminAttendanceModal(parseInt(idx) - 1);
+        }
+
+        function editAdminAttendanceModal(idx) {
+            const item = appData.attendance[idx];
+            const newType = prompt('تعديل النوع:', item.type);
+            if (newType === null) return;
+            const newJustified = prompt('تعديل التبرير:', item.justified);
+            if (newJustified === null) return;
+
+            appData.attendance[idx].type = newType;
+            appData.attendance[idx].justified = newJustified;
+            saveData();
+            renderAdminAttendance();
+        }
+
+        function deleteAdminAttendance(idx) {
+            if (confirm('هل أنت متأكد من حذف سجل الغياب هذا؟')) {
+                appData.attendance.splice(idx, 1);
+                saveData();
+                renderAdminAttendance();
+            }
+        }
+
+        function clearAttendanceList() {
+            if (confirm('هل أنت متأكد من مسح كافة سجلات الغياب؟')) {
+                appData.attendance = [];
+                saveData();
+                renderAdminAttendance();
+            }
+        }
+
+        // نافذة المهددون بالفشل مع أزرار الإضافة والتعديل والحذف
+        function renderAdminFailureRisk() {
+            if (!requireAuth('ADMIN')) return;
+            let rows = appData.failureRisk.map((item, idx) => `
+                <tr class="border-b border-slate-200 hover:bg-slate-100 text-xs">
+                    <td class="p-2 font-mono">${item.date || '-'}</td>
+                    <td class="p-2 font-bold">${item.studentName || '-'}</td>
+                    <td class="p-2 font-bold text-emerald-700">${item.className || '-'}</td>
+                    <td class="p-2 font-bold text-orange-700">${item.reason || '-'}</td>
+                    <td class="p-2 font-bold text-purple-700">${item.teacherName || '-'}</td>
+                    <td class="p-2 flex gap-1 no-print">
+                        <button onclick="editFailureRiskModal(${idx})" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold px-2 py-1 rounded">تعديل</button>
+                        <button onclick="deleteFailureRisk(${idx})" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2 py-1 rounded">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                ${getAdminHeaderHTML('التلاميذ المهددون بالفشل الدراسي', 'fa-solid fa-triangle-exclamation', 'text-orange-700')}
+                ${getActionButtonsToolbarHTML('promptAddFailureRisk', 'promptEditFailureRisk', 'clearFailureRiskList')}
+                <div class="overflow-x-auto max-h-[65vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-2 whitespace-nowrap">التاريخ</th>
+                                <th class="p-2 whitespace-nowrap">التلميذ (ة)</th>
+                                <th class="p-2 whitespace-nowrap">القسم</th>
+                                <th class="p-2 whitespace-nowrap">السبب</th>
+                                <th class="p-2 whitespace-nowrap">الأستاذ المبلغ</th>
+                                <th class="p-2 whitespace-nowrap no-print">خيارات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="6" class="text-center p-6 text-slate-500 font-bold">لا توجد معطيات مسجلة حالياً.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function promptAddFailureRisk() {
+            const massar = prompt('أدخل رمز مسار التلميذ المهدد بالفشل:');
+            if (!massar) return;
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massar).trim());
+            if (!student) return alert('التلميذ غير موجود.');
+            const reason = prompt('سبب التهديد بالفشل:', 'بسبب السن أو التكرار');
+            if (!reason) return;
+
+            appData.failureRisk.push({
+                massarId: student.massarId,
+                studentName: `${student.firstName} ${student.lastName}`,
+                className: student.className,
+                teacherName: currentSession.user.name,
+                reason,
+                date: new Date().toISOString().split('T')[0]
+            });
+            saveData();
+            renderAdminFailureRisk();
+        }
+
+        function promptEditFailureRisk() {
+            if (appData.failureRisk.length === 0) return alert('السجل فارغ.');
+            const idx = prompt(`أدخل رقم السطر المراد تعديله (من 1 إلى ${appData.failureRisk.length}):`);
+            if (idx === null || isNaN(idx)) return;
+            editFailureRiskModal(parseInt(idx) - 1);
+        }
+
+        function editFailureRiskModal(idx) {
+            const item = appData.failureRisk[idx];
+            const newReason = prompt('تعديل السبب:', item.reason);
+            if (newReason === null) return;
+            appData.failureRisk[idx].reason = newReason;
+            saveData();
+            renderAdminFailureRisk();
+        }
+
+        function deleteFailureRisk(idx) {
+            if (confirm('هل أنت متأكد من الحذف؟')) {
+                appData.failureRisk.splice(idx, 1);
+                saveData();
+                renderAdminFailureRisk();
+            }
+        }
+
+        function clearFailureRiskList() {
+            if (confirm('هل أنت متأكد من مسح القائمة كاملة؟')) {
+                appData.failureRisk = [];
+                saveData();
+                renderAdminFailureRisk();
+            }
+        }
+
+        // نافذة الملاحظات مع أزرار الإضافة والتعديل والحذف
+        function renderAdminNotes() {
+            if (!requireAuth('ADMIN')) return;
+            let rows = appData.notes.map((item, idx) => `
+                <tr class="border-b border-slate-200 hover:bg-slate-100 text-xs">
+                    <td class="p-2 font-mono">${item.date || '-'}</td>
+                    <td class="p-2 font-bold">${item.studentName || '-'}</td>
+                    <td class="p-2 font-bold text-emerald-700">${item.className || '-'}</td>
+                    <td class="p-2">${item.subject || '-'}</td>
+                    <td class="p-2 font-bold text-purple-700">${item.teacherName || '-'}</td>
+                    <td class="p-2">${item.text || '-'}</td>
+                    <td class="p-2 flex gap-1 no-print">
+                        <button onclick="editAdminNoteModal(${idx})" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold px-2 py-1 rounded">تعديل</button>
+                        <button onclick="deleteAdminNote(${idx})" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2 py-1 rounded">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                ${getAdminHeaderHTML('ملاحظات الأساتذة الشاملة', 'fa-solid fa-note-sticky', 'text-slate-800')}
+                ${getActionButtonsToolbarHTML('promptAddNote', 'promptEditNote', 'clearNotesList')}
+                <div class="overflow-x-auto max-h-[65vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-2 whitespace-nowrap">التاريخ</th>
+                                <th class="p-2 whitespace-nowrap">التلميذ (ة)</th>
+                                <th class="p-2 whitespace-nowrap">القسم</th>
+                                <th class="p-2 whitespace-nowrap">المادة</th>
+                                <th class="p-2 whitespace-nowrap">الأستاذ</th>
+                                <th class="p-2 whitespace-nowrap">الملاحظة</th>
+                                <th class="p-2 whitespace-nowrap no-print">خيارات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="7" class="text-center p-6 text-slate-500 font-bold">لا توجد ملاحظات مسجلة حالياً.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function promptAddNote() {
+            const massar = prompt('أدخل رمز مسار التلميذ لإضافة الملاحظة:');
+            if (!massar) return;
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massar).trim());
+            if (!student) return alert('التلميذ غير موجود.');
+            const text = prompt('نص الملاحظة:');
+            if (!text) return;
+
+            appData.notes.push({
+                massarId: student.massarId,
+                studentName: `${student.firstName} ${student.lastName}`,
+                className: student.className,
+                teacherName: currentSession.user.name,
+                subject: 'إدارة',
+                date: new Date().toISOString().split('T')[0],
+                text
+            });
+            saveData();
+            renderAdminNotes();
+        }
+
+        function promptEditNote() {
+            if (appData.notes.length === 0) return alert('السجل فارغ.');
+            const idx = prompt(`أدخل رقم السطر المراد تعديله (من 1 إلى ${appData.notes.length}):`);
+            if (idx === null || isNaN(idx)) return;
+            editAdminNoteModal(parseInt(idx) - 1);
+        }
+
+        function editAdminNoteModal(idx) {
+            const item = appData.notes[idx];
+            const newText = prompt('تعديل نص الملاحظة:', item.text);
+            if (newText === null) return;
+            appData.notes[idx].text = newText;
+            saveData();
+            renderAdminNotes();
+        }
+
+        function deleteAdminNote(idx) {
+            if (confirm('هل أنت متأكد من الحذف؟')) {
+                appData.notes.splice(idx, 1);
+                saveData();
+                renderAdminNotes();
+            }
+        }
+
+        function clearNotesList() {
+            if (confirm('هل أنت متأكد من مسح جميع الملاحظات؟')) {
+                appData.notes = [];
+                saveData();
+                renderAdminNotes();
+            }
+        }
+
+        // نافذة سجل السلوك مع أزرار الإضافة والتعديل والحذف
+        function renderAdminBehavior() {
+            if (!requireAuth('ADMIN')) return;
+            let rows = appData.behavior.map((item, idx) => `
+                <tr class="border-b border-slate-200 hover:bg-slate-100 text-xs">
+                    <td class="p-2 font-mono">${item.date || '-'}</td>
+                    <td class="p-2 font-bold">${item.studentName || '-'}</td>
+                    <td class="p-2 font-bold text-emerald-700">${item.className || '-'}</td>
+                    <td class="p-2 font-bold text-sky-700">${item.type || '-'}</td>
+                    <td class="p-2">${item.description || '-'}</td>
+                    <td class="p-2 font-bold text-purple-700">${item.teacherName || '-'}</td>
+                    <td class="p-2 flex gap-1 no-print">
+                        <button onclick="editAdminBehaviorModal(${idx})" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold px-2 py-1 rounded">تعديل</button>
+                        <button onclick="deleteAdminBehavior(${idx})" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2 py-1 rounded">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                ${getAdminHeaderHTML('سجل السلوك العام', 'fa-solid fa-shield-halved', 'text-sky-700')}
+                ${getActionButtonsToolbarHTML('promptAddBehavior', 'promptEditBehavior', 'clearBehaviorList')}
+                <div class="overflow-x-auto max-h-[65vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-2 whitespace-nowrap">التاريخ</th>
+                                <th class="p-2 whitespace-nowrap">التلميذ (ة)</th>
+                                <th class="p-2 whitespace-nowrap">القسم</th>
+                                <th class="p-2 whitespace-nowrap">نوع السلوك</th>
+                                <th class="p-2 whitespace-nowrap">الوصف</th>
+                                <th class="p-2 whitespace-nowrap">الأستاذ</th>
+                                <th class="p-2 whitespace-nowrap no-print">خيارات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="7" class="text-center p-6 text-slate-500 font-bold">لا توجد معطيات سلوك مسجلة حالياً.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function promptAddBehavior() {
+            const massar = prompt('أدخل رمز مسار التلميذ لتسجيل السلوك:');
+            if (!massar) return;
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massar).trim());
+            if (!student) return alert('التلميذ غير موجود.');
+            const type = prompt('نوع السلوك (إيجابي / شغب / عدم احترام):', 'شغب');
+            if (!type) return;
+            const description = prompt('وصف السلوك:');
+            if (!description) return;
+
+            appData.behavior.push({
+                massarId: student.massarId,
+                studentName: `${student.firstName} ${student.lastName}`,
+                className: student.className,
+                teacherName: currentSession.user.name,
+                date: new Date().toISOString().split('T')[0],
+                type,
+                description
+            });
+            saveData();
+            renderAdminBehavior();
+        }
+
+        function promptEditBehavior() {
+            if (appData.behavior.length === 0) return alert('السجل فارغ.');
+            const idx = prompt(`أدخل رقم السطر المراد تعديله (من 1 إلى ${appData.behavior.length}):`);
+            if (idx === null || isNaN(idx)) return;
+            editAdminBehaviorModal(parseInt(idx) - 1);
+        }
+
+        function editAdminBehaviorModal(idx) {
+            const item = appData.behavior[idx];
+            const newType = prompt('تعديل النوع:', item.type);
+            if (newType === null) return;
+            const newDesc = prompt('تعديل الوصف:', item.description);
+            if (newDesc === null) return;
+
+            appData.behavior[idx].type = newType;
+            appData.behavior[idx].description = newDesc;
+            saveData();
+            renderAdminBehavior();
+        }
+
+        function deleteAdminBehavior(idx) {
+            if (confirm('هل أنت متأكد من الحذف؟')) {
+                appData.behavior.splice(idx, 1);
+                saveData();
+                renderAdminBehavior();
+            }
+        }
+
+        function clearBehaviorList() {
+            if (confirm('هل أنت متأكد من مسح السجل كاملة؟')) {
+                appData.behavior = [];
+                saveData();
+                renderAdminBehavior();
+            }
+        }
+
+        // نافذة تتبع الواجبات مع أزرار الإضافة والتعديل والحذف
+        function renderAdminHomework() {
+            if (!requireAuth('ADMIN')) return;
+            let rows = appData.homework.map((item, idx) => `
+                <tr class="border-b border-slate-200 hover:bg-slate-100 text-xs">
+                    <td class="p-2 font-mono">${item.date || '-'}</td>
+                    <td class="p-2 font-bold">${item.studentName || '-'}</td>
+                    <td class="p-2 font-bold text-emerald-700">${item.className || '-'}</td>
+                    <td class="p-2">${item.title || '-'}</td>
+                    <td class="p-2 font-bold text-purple-700">${item.status || '-'}</td>
+                    <td class="p-2 font-bold text-slate-700">${item.teacherName || '-'}</td>
+                    <td class="p-2 flex gap-1 no-print">
+                        <button onclick="editAdminHomeworkModal(${idx})" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold px-2 py-1 rounded">تعديل</button>
+                        <button onclick="deleteAdminHomework(${idx})" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2 py-1 rounded">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('app-container').innerHTML = `
+                ${getAdminHeaderHTML('تتبع الواجبات المنزلية', 'fa-solid fa-book-open', 'text-purple-700')}
+                ${getActionButtonsToolbarHTML('promptAddHomework', 'promptEditHomework', 'clearHomeworkList')}
+                <div class="overflow-x-auto max-h-[65vh] glass-card rounded-xl border border-slate-300 shadow-inner">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-200 text-slate-800 text-xs border-b border-slate-300 font-bold sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-2 whitespace-nowrap">التاريخ</th>
+                                <th class="p-2 whitespace-nowrap">التلميذ (ة)</th>
+                                <th class="p-2 whitespace-nowrap">القسم</th>
+                                <th class="p-2 whitespace-nowrap">الواجب</th>
+                                <th class="p-2 whitespace-nowrap">الحالة</th>
+                                <th class="p-2 whitespace-nowrap">الأستاذ</th>
+                                <th class="p-2 whitespace-nowrap no-print">خيارات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows || '<tr><td colspan="7" class="text-center p-6 text-slate-500 font-bold">لا توجد معطيات واجبات مسجلة حالياً.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function promptAddHomework() {
+            const massar = prompt('أدخل رمز مسار التلميذ لتسجيل الواجب:');
+            if (!massar) return;
+            const student = appData.students.find(s => String(s.massarId).trim() === String(massar).trim());
+            if (!student) return alert('التلميذ غير موجود.');
+            const title = prompt('عنوان الواجب أو التمرين:');
+            if (!title) return;
+            const status = prompt('حالة الإنجاز (منجز / غير منجز / منجز جزئيا):', 'منجز');
+
+            appData.homework.push({
+                massarId: student.massarId,
+                studentName: `${student.firstName} ${student.lastName}`,
+                className: student.className,
+                teacherName: currentSession.user.name,
+                title,
+                date: new Date().toISOString().split('T')[0],
+                status
+            });
+            saveData();
+            renderAdminHomework();
+        }
+
+        function promptEditHomework() {
+            if (appData.homework.length === 0) return alert('السجل فارغ.');
+            const idx = prompt(`أدخل رقم السطر المراد تعديله (من 1 إلى ${appData.homework.length}):`);
+            if (idx === null || isNaN(idx)) return;
+            editAdminHomeworkModal(parseInt(idx) - 1);
+        }
+
+        function editAdminHomeworkModal(idx) {
+            const item = appData.homework[idx];
+            const newTitle = prompt('تعديل الواجب:', item.title);
+            if (newTitle === null) return;
+            const newStatus = prompt('تعديل الحالة:', item.status);
+            if (newStatus === null) return;
+
+            appData.homework[idx].title = newTitle;
+            appData.homework[idx].status = newStatus;
+            saveData();
+            renderAdminHomework();
+        }
+
+        function deleteAdminHomework(idx) {
+            if (confirm('هل أنت متأكد من الحذف؟')) {
+                appData.homework.splice(idx, 1);
+                saveData();
+                renderAdminHomework();
+            }
+        }
+
+        function clearHomeworkList() {
+            if (confirm('هل أنت متأكد من مسح السجل كاملة؟')) {
+                appData.homework = [];
+                saveData();
+                renderAdminHomework();
+            }
+        }
+    </script>
+</body>
+</html>
